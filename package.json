@@ -1,0 +1,28 @@
+{
+  "name": "nuxt-ui-template-editor",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.77",
+    "@iconify-json/simple-icons": "^1.2.60",
+    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@1e44530",
+    "@tiptap/extension-emoji": "^3.11.1",
+    "@tiptap/extension-text-align": "^3.11.1",
+    "nuxt": "^4.2.1"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.11.0",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.1.5"
+  },
+  "packageManager": "pnpm@10.24.0"
+}
