@@ -14,9 +14,13 @@
     "@iconify-json/lucide": "^1.2.77",
     "@iconify-json/simple-icons": "^1.2.60",
     "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@1e44530",
+    "@tiptap/extension-collaboration": "^3.11.1",
+    "@tiptap/extension-collaboration-caret": "^3.11.1",
     "@tiptap/extension-emoji": "^3.11.1",
     "@tiptap/extension-text-align": "^3.11.1",
-    "nuxt": "^4.2.1"
+    "nuxt": "^4.2.1",
+    "y-partykit": "^0.0.25",
+    "yjs": "^13.6.27"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.11.0",

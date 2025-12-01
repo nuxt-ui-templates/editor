@@ -17,8 +17,10 @@ export default defineNuxtConfig({
     }
   },
 
-  routeRules: {
-    '/': { prerender: true }
+  runtimeConfig: {
+    public: {
+      partykitHost: ''
+    }
   },
 
   compatibilityDate: '2025-01-15',
@@ -27,7 +29,9 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         'prosemirror-state',
-        'prosemirror-view'
+        'prosemirror-view',
+        'yjs',
+        'y-partykit/provider'
       ]
     }
   },

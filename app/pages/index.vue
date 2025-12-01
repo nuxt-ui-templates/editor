@@ -1,75 +1,30 @@
 <script setup lang="ts">
-import { upperFirst } from 'scule'
-import type { EditorToolbarItem, EditorMentionMenuItem, EditorEmojiMenuItem, DropdownMenuItem, EditorSuggestionMenuItem, EditorCustomHandlers } from '@nuxt/ui'
-import type { Editor, Node, Content } from '@tiptap/vue-3'
-import { mapEditorItems } from '@nuxt/ui/utils/editor'
-import { Emoji, gitHubEmojis } from '@tiptap/extension-emoji'
+import type { EditorCustomHandlers } from '@nuxt/ui'
+import type { Editor } from '@tiptap/core'
+import { Emoji } from '@tiptap/extension-emoji'
 import TextAlign from '@tiptap/extension-text-align'
 import ImageUpload from '../components/editor/ImageUpload'
 
-const content = ref<Content>(`# Nuxt UI: A Modern UI Library
+const route = useRoute()
+const runtimeConfig = useRuntimeConfig()
 
-Welcome to **Nuxt UI**, a comprehensive UI library for *Nuxt 3* applications.
-Built with [Tailwind CSS](https://tailwindcss.com) and [Reka UI](https://reka-ui.com), it provides a complete set of components for building beautiful interfaces.
+const roomId = computed(() => route.query.room as string | undefined)
 
-![Image Placeholder](/placeholder.jpeg)
+const {
+  enabled: collaborationEnabled,
+  ready: collaborationReady,
+  extensions: collaborationExtensions,
+  connectedUsers
+} = useEditorCollaboration({
+  roomId: roomId.value,
+  host: runtimeConfig.public.partykitHost,
+  user: {
+    name: getRandomName(),
+    color: getRandomColor()
+  }
+})
 
-## Key Features
-
-Nuxt UI combines the best of modern web development
-
-- **Fully typed** with TypeScript support
-- *Customizable* theme system with semantic colors
-- <u>Accessible</u> components following ARIA guidelines
-- Built on top of \`Reka UI\` primitives
-- Support for ~~legacy browsers~~ modern standards
-
-### Getting Started
-
-Install Nuxt UI in your project with the following command:
-
-\`\`\`
-npx nuxi@latest module add ui
-\`\`\`
-
-> *Nuxt UI is designed to be intuitive and easy to use, whether you're building a simple landing page or a complex application.*
-
-### Component Categories
-
-1. Layout components (Container, Card, Accordion)
-2. Form components (Input, Select, Checkbox)
-3. Navigation (Navbar, Sidebar, Breadcrumb)
-4. Feedback (Alert, Toast, Modal)
-
-#### Code Example
-
-Here's a simple example using the \`Button\` component:
-
-\`\`\`
-<template>
-  <UButton color="primary">
-    Click me
-  </UButton>
-</template>
-\`\`\`
-
----
-
-## Advanced Features
-
-Powerful capabilities for modern applications
-
-- Dark mode support out of the box
-- Keyboard shortcuts for improved accessibility
-- Nested lists support:
-  - With multiple levels
-  - And proper spacing
-
-Whether you're working on a personal project or building an enterprise application, Nuxt UI provides all the tools you need to create stunning user interfaces quickly and efficiently. The library is constantly evolving with new components and improvements based on community feedback.
-
-Visit our [documentation](https://ui.nuxt.com) to learn more and explore all available components.
-`)
-
+// Custom handlers for editor
 const customHandlers = {
   imageUpload: {
     canExecute: (editor: Editor) => editor.can().insertContent({ type: 'imageUpload' }),
@@ -79,319 +34,122 @@ const customHandlers = {
   }
 } satisfies EditorCustomHandlers
 
-const toolbarItems = [{
-  kind: 'undo',
-  icon: 'i-lucide-undo'
-}, {
-  kind: 'redo',
-  icon: 'i-lucide-redo'
-}]
+const { items: emojiItems } = useEditorEmojis()
+const { items: mentionItems } = useEditorMentions(connectedUsers)
+const { items: suggestionItems } = useEditorSuggestions(customHandlers)
+const { getItems: getDragHandleItems, onNodeChange } = useEditorDragHandle(customHandlers)
+const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers)
 
-const bubbleToolbarItems = [[{
-  icon: 'i-lucide-heading',
-  ui: {
-    label: 'text-xs'
-  },
-  items: [{
-    type: 'label',
-    label: 'Headings'
-  }, {
-    kind: 'heading',
-    level: 1,
-    icon: 'i-lucide-heading-1',
-    label: 'Heading 1'
-  }, {
-    kind: 'heading',
-    level: 2,
-    icon: 'i-lucide-heading-2',
-    label: 'Heading 2'
-  }, {
-    kind: 'heading',
-    level: 3,
-    icon: 'i-lucide-heading-3',
-    label: 'Heading 3'
-  }, {
-    kind: 'heading',
-    level: 4,
-    icon: 'i-lucide-heading-4',
-    label: 'Heading 4'
-  }]
-}, {
-  icon: 'i-lucide-list',
-  items: [{
-    kind: 'bulletList',
-    icon: 'i-lucide-list',
-    label: 'Bullet List'
-  }, {
-    kind: 'orderedList',
-    icon: 'i-lucide-list-ordered',
-    label: 'Ordered List'
-  }]
-}, {
-  kind: 'blockquote',
-  icon: 'i-lucide-text-quote'
-}, {
-  kind: 'codeBlock',
-  icon: 'i-lucide-square-code'
-}, {
-  kind: 'horizontalRule',
-  icon: 'i-lucide-separator-horizontal'
-}, {
-  kind: 'paragraph',
-  icon: 'i-lucide-type'
-}], [{
-  kind: 'mark',
-  mark: 'bold',
-  icon: 'i-lucide-bold'
-}, {
-  kind: 'mark',
-  mark: 'italic',
-  icon: 'i-lucide-italic'
-}, {
-  kind: 'mark',
-  mark: 'underline',
-  icon: 'i-lucide-underline'
-}, {
-  kind: 'mark',
-  mark: 'strike',
-  icon: 'i-lucide-strikethrough'
-}, {
-  kind: 'mark',
-  mark: 'code',
-  icon: 'i-lucide-code'
-}], [{
-  slot: 'link' as const
-}, {
-  kind: 'imageUpload',
-  icon: 'i-lucide-image'
-}], [{
-  kind: 'textAlign',
-  align: 'left',
-  icon: 'i-lucide-align-left'
-}, {
-  kind: 'textAlign',
-  align: 'center',
-  icon: 'i-lucide-align-center'
-}, {
-  kind: 'textAlign',
-  align: 'right',
-  icon: 'i-lucide-align-right'
-}, {
-  kind: 'textAlign',
-  align: 'justify',
-  icon: 'i-lucide-align-justify'
-}]] satisfies EditorToolbarItem<typeof customHandlers>[][]
+// Default content - only used when Y.js document is empty
+const content = ref(`# Nuxt UI Editor
 
-const imageToolbarItems = (editor: Editor): EditorToolbarItem<typeof customHandlers>[][] => {
-  const node = editor.state.doc.nodeAt(editor.state.selection.from)
+This editor supports **real-time collaboration**. Add \`?room=your-room-name\` to the URL and share the link to collaborate with others.
 
-  return [[{
-    icon: 'i-lucide-download',
-    to: node?.attrs?.src,
-    download: true
-  }, {
-    icon: 'i-lucide-refresh-cw',
-    onClick: () => {
-      const { state } = editor
-      const { selection } = state
+---
 
-      const pos = selection.from
-      const node = state.doc.nodeAt(pos)
+## Rich Text Formatting
 
-      if (node && node.type.name === 'image') {
-        editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).insertContentAt(pos, { type: 'imageUpload' }).run()
-      }
+This editor supports **bold**, *italic*, <u>underline</u>, ~~strikethrough~~, and \`inline code\`.
+
+![Image Placeholder](/placeholder.jpeg)
+
+## Slash Commands
+
+Type \`/\` anywhere to open the command menu and quickly insert:
+
+- Headings, paragraphs, and blockquotes
+- Bullet lists and numbered lists
+- Code blocks and horizontal rules
+- Images and more
+
+## Mentions & Emojis
+
+Mention collaborators with \`@\` and add emojis with \`:\` syntax :rocket:
+
+> *Pro tip: Use the bubble toolbar that appears when you select text for quick formatting.*
+
+## Code Blocks
+
+\`\`\`javascript
+const editor = new Editor({
+  extensions: [StarterKit, Collaboration],
+  content: 'Hello World!'
+})
+\`\`\`
+
+## Lists
+
+Organize your content with lists:
+
+1. Numbered lists for sequential items
+2. With automatic numbering
+3. And proper indentation
+
+Or use bullet points:
+
+- First item
+- Second item
+  - Nested items work too
+  - With multiple levels
+
+## Drag & Drop
+
+Use the drag handle on the left side of any block to:
+
+- Reorder content by dragging
+- Duplicate blocks
+- Delete blocks
+- Convert between block types
+
+---
+
+Visit the [Nuxt UI documentation](https://ui.nuxt.com/docs/components/editor) to learn more about the Editor component.
+`)
+
+// Set initial content for collaborative documents (only if empty)
+function onCreate({ editor }: { editor: Editor }) {
+  if (!collaborationEnabled) return
+
+  const storageKey = `editor-initialized-${roomId.value}`
+
+  // Skip if already initialized this session (handles HMR)
+  if (sessionStorage.getItem(storageKey)) return
+
+  // Wait for Y.js to sync existing content from server before checking if empty
+  setTimeout(() => {
+    const text = editor.state.doc.textContent.trim()
+    if (!text) {
+      editor.commands.setContent(content.value, { contentType: 'markdown' })
     }
-  }], [{
-    icon: 'i-lucide-trash',
-    onClick: () => {
-      const { state } = editor
-      const { selection } = state
-
-      const pos = selection.from
-      const node = state.doc.nodeAt(pos)
-
-      if (node && node.type.name === 'image') {
-        editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).run()
-      }
-    }
-  }]]
+    sessionStorage.setItem(storageKey, 'true')
+  }, 500)
 }
 
-const selectedNode = ref<{ node: Node | null, pos: number }>()
-
-const handleItems = (editor: Editor): DropdownMenuItem[][] => {
-  if (!selectedNode.value?.node) {
-    return []
+function onUpdate(value: string) {
+  if (!collaborationEnabled) {
+    content.value = value
   }
-
-  return mapEditorItems(editor, [[
-    {
-      type: 'label',
-      label: upperFirst(selectedNode.value.node.type)
-    },
-    {
-      label: 'Turn into',
-      icon: 'i-lucide-repeat-2',
-      children: [
-        { kind: 'paragraph', label: 'Paragraph', icon: 'i-lucide-type' },
-        { kind: 'heading', level: 1, label: 'Heading 1', icon: 'i-lucide-heading-1' },
-        { kind: 'heading', level: 2, label: 'Heading 2', icon: 'i-lucide-heading-2' },
-        { kind: 'heading', level: 3, label: 'Heading 3', icon: 'i-lucide-heading-3' },
-        { kind: 'heading', level: 4, label: 'Heading 4', icon: 'i-lucide-heading-4' },
-        { kind: 'bulletList', label: 'Bullet List', icon: 'i-lucide-list' },
-        { kind: 'orderedList', label: 'Ordered List', icon: 'i-lucide-list-ordered' },
-        { kind: 'blockquote', label: 'Blockquote', icon: 'i-lucide-text-quote' },
-        { kind: 'codeBlock', label: 'Code Block', icon: 'i-lucide-square-code' }
-      ]
-    },
-    {
-      kind: 'clearFormatting',
-      pos: selectedNode.value?.pos,
-      label: 'Reset formatting',
-      icon: 'i-lucide-rotate-ccw'
-    }
-  ], [
-    {
-      kind: 'duplicate',
-      pos: selectedNode.value?.pos,
-      label: 'Duplicate',
-      icon: 'i-lucide-copy'
-    },
-    {
-      label: 'Copy to clipboard',
-      icon: 'i-lucide-clipboard',
-      onSelect: async () => {
-        if (!selectedNode.value) return
-
-        const pos = selectedNode.value.pos
-        const node = editor.state.doc.nodeAt(pos)
-        if (node) {
-          await navigator.clipboard.writeText(node.textContent)
-        }
-      }
-    }
-  ], [
-    {
-      kind: 'moveUp',
-      pos: selectedNode.value?.pos,
-      label: 'Move up',
-      icon: 'i-lucide-arrow-up'
-    },
-    {
-      kind: 'moveDown',
-      pos: selectedNode.value?.pos,
-      label: 'Move down',
-      icon: 'i-lucide-arrow-down'
-    }
-  ], [
-    {
-      kind: 'delete',
-      pos: selectedNode.value?.pos,
-      label: 'Delete',
-      icon: 'i-lucide-trash'
-    }
-  ]], customHandlers) as DropdownMenuItem[][]
 }
 
-const suggestionItems = [[{
-  type: 'label',
-  label: 'Style'
-}, {
-  kind: 'paragraph',
-  label: 'Paragraph',
-  icon: 'i-lucide-type'
-}, {
-  kind: 'heading',
-  level: 1,
-  label: 'Heading 1',
-  icon: 'i-lucide-heading-1'
-}, {
-  kind: 'heading',
-  level: 2,
-  label: 'Heading 2',
-  icon: 'i-lucide-heading-2'
-}, {
-  kind: 'heading',
-  level: 3,
-  label: 'Heading 3',
-  icon: 'i-lucide-heading-3'
-}, {
-  kind: 'bulletList',
-  label: 'Bullet List',
-  icon: 'i-lucide-list'
-}, {
-  kind: 'orderedList',
-  label: 'Numbered List',
-  icon: 'i-lucide-list-ordered'
-}, {
-  kind: 'blockquote',
-  label: 'Blockquote',
-  icon: 'i-lucide-text-quote'
-}, {
-  kind: 'codeBlock',
-  label: 'Code Block',
-  icon: 'i-lucide-square-code'
-}], [{
-  type: 'label',
-  label: 'Insert'
-}, {
-  kind: 'mention',
-  label: 'Mention',
-  icon: 'i-lucide-at-sign'
-}, {
-  kind: 'emoji',
-  label: 'Emoji',
-  icon: 'i-lucide-smile-plus'
-}, {
-  kind: 'imageUpload',
-  label: 'Image',
-  icon: 'i-lucide-image'
-}, {
-  kind: 'horizontalRule',
-  label: 'Horizontal Rule',
-  icon: 'i-lucide-separator-horizontal'
-}]] satisfies EditorSuggestionMenuItem<typeof customHandlers>[][]
-
-const mentionItems: EditorMentionMenuItem[] = [{
-  label: 'benjamincanac',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/739984?v=4' }
-}, {
-  label: 'HugoRCD',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/71938701?v=4' }
-}, {
-  label: 'romhml',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/25613751?v=4' }
-}, {
-  label: 'sandros94',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/13056429?v=4' }
-}, {
-  label: 'hywax',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/149865959?v=4' }
-}, {
-  label: 'J-Michalek',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/71264422?v=4' }
-}, {
-  label: 'genu',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/928780?v=4' }
-}]
-
-const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.name.startsWith('regional_indicator_'))
+const extensions = computed(() => [
+  Emoji,
+  ImageUpload,
+  TextAlign.configure({
+    types: ['heading', 'paragraph']
+  }),
+  ...collaborationExtensions.value
+])
 </script>
 
 <template>
   <UEditor
+    v-if="collaborationReady"
     v-slot="{ editor, handlers }"
-    v-model="content"
-    :extensions="[
-      Emoji,
-      ImageUpload,
-      TextAlign.configure({
-        types: ['heading', 'paragraph']
-      })
-    ]"
-    :handlers="customHandlers"
+    :model-value="collaborationEnabled ? undefined : content"
     content-type="markdown"
+    :extensions="extensions"
+    :starter-kit="collaborationEnabled ? { undoRedo: false } : undefined"
+    :handlers="customHandlers"
     autofocus
     placeholder="Write, type '/' for commands..."
     class="min-h-screen"
@@ -399,8 +157,12 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
       base: 'p-4 sm:p-14',
       content: 'max-w-4xl mx-auto'
     }"
+    @update:model-value="onUpdate"
+    @create="onCreate"
   >
     <AppHeader>
+      <EditorCollaborationUsers :users="connectedUsers" />
+
       <UEditorToolbar
         :editor="editor"
         :items="toolbarItems"
@@ -426,7 +188,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
 
     <UEditorToolbar
       :editor="editor"
-      :items="imageToolbarItems(editor)"
+      :items="getImageToolbarItems(editor)"
       layout="bubble"
       :should-show="({ editor, view }: any) => {
         return editor.isActive('image') && view.hasFocus()
@@ -436,7 +198,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
     <UEditorDragHandle
       v-slot="{ ui, onClick }"
       :editor="editor"
-      @node-change="selectedNode = $event"
+      @node-change="onNodeChange"
     >
       <UButton
         icon="i-lucide-plus"
@@ -455,7 +217,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
       <UDropdownMenu
         v-slot="{ open }"
         :modal="false"
-        :items="handleItems(editor)"
+        :items="getDragHandleItems(editor)"
         :content="{ side: 'left' }"
         :ui="{ content: 'w-48', label: 'text-xs' }"
         @update:open="editor.chain().setMeta('lockDragHandle', $event).run()"
@@ -472,17 +234,17 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
       </UDropdownMenu>
     </UEditorDragHandle>
 
-    <UEditorSuggestionMenu
+    <UEditorEmojiMenu
       :editor="editor"
-      :items="suggestionItems"
+      :items="emojiItems"
     />
     <UEditorMentionMenu
       :editor="editor"
       :items="mentionItems"
     />
-    <UEditorEmojiMenu
+    <UEditorSuggestionMenu
       :editor="editor"
-      :items="emojiItems"
+      :items="suggestionItems"
     />
   </UEditor>
 </template>

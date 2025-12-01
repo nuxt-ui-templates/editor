@@ -26,6 +26,7 @@ A rich text editor template built with [Nuxt UI](https://ui.nuxt.com) and [TipTa
 - **Emoji Picker** - Full GitHub emoji set with `:emoji:` syntax
 - **Text Alignment** - Left, center, right, and justify alignment options
 - **Markdown Support** - Content type set to markdown for easy serialization
+- **Real-time Collaboration** - Optional collaborative editing powered by [PartyKit](https://partykit.io)
 
 ## Quick Start
 
@@ -35,7 +36,7 @@ npm create nuxt@latest -- -t github:nuxt-ui-templates/editor
 
 ## Deploy your own
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=editor&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Feditor&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Feditor-dark.png&demo-url=https%3A%2F%2Feditor-template.nuxt.dev%2F&demo-title=Nuxt%20Editor%20Template&demo-description=A%20rich%20text%20editor%20template%20built%20with%20Nuxt%20UI%20and%20TipTap.)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=editor&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Feditor&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Feditor-dark.png&demo-url=https%3A%2F%2Feditor-template.nuxt.dev%2F&demo-title=Nuxt%20Editor%20Template&demo-description=A%20rich%20text%20editor%20template%20built%20with%20Nuxt%20UI%20and%20TipTap.&env=NUXT_PUBLIC_PARTYKIT_HOST&envDescription=PartyKit%20host%20URL%20for%20real-time%20collaboration%20(optional)&envLink=https%3A%2F%2Fdocs.partykit.io%2Fquickstart%2F)
 
 ## Setup
 
@@ -44,6 +45,29 @@ Make sure to install the dependencies:
 ```bash
 pnpm install
 ```
+
+### Collaboration (Optional)
+
+This template includes optional real-time collaboration powered by [Y.js](https://yjs.dev), a CRDT framework for building collaborative applications. This example uses [PartyKit](https://partykit.io) as the Y.js provider, but you can swap it for alternatives like [Liveblocks](https://liveblocks.io/) or [Tiptap Collaboration](https://tiptap.dev/product/collaboration).
+
+To enable collaboration with PartyKit:
+
+1. Create and deploy a PartyKit server following the [PartyKit Quickstart](https://docs.partykit.io/quickstart/):
+
+```bash
+npm create partykit@latest
+npx partykit deploy
+```
+
+2. Set your PartyKit host in `.env`:
+
+```bash
+NUXT_PUBLIC_PARTYKIT_HOST=your-project.username.partykit.dev
+```
+
+3. Add `?room=your-room-name` to the URL to collaborate. All users with the same room name will edit together in real-time.
+
+> Without the environment variable or `?room=` parameter, the editor works standalone without collaboration.
 
 ## Development Server
 
