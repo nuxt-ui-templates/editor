@@ -1,13 +1,43 @@
 <script setup lang="ts">
-import { upperFirst } from 'scule'
-import type { EditorToolbarItem, EditorMentionMenuItem, EditorEmojiMenuItem, DropdownMenuItem, EditorSuggestionMenuItem, EditorCustomHandlers } from '@nuxt/ui'
-import type { Editor, Node, Content } from '@tiptap/vue-3'
-import { mapEditorItems } from '@nuxt/ui/utils/editor'
-import { Emoji, gitHubEmojis } from '@tiptap/extension-emoji'
+import type { EditorCustomHandlers } from '@nuxt/ui'
+import type { Editor } from '@tiptap/core'
+import { Emoji } from '@tiptap/extension-emoji'
 import TextAlign from '@tiptap/extension-text-align'
 import ImageUpload from '../components/editor/ImageUpload'
 
-const content = ref<Content>(`# Nuxt UI: A Modern UI Library
+// Collaboration is only enabled when a room is specified via ?room=xxx
+const route = useRoute()
+const roomId = computed(() => route.query.room as string | undefined)
+const collaborationEnabled = computed(() => !!roomId.value)
+
+const { extensions: collaborationExtensions, connectedUsers, fragment } = useEditorCollaboration({
+  documentName: roomId.value || '',
+  enabled: collaborationEnabled.value,
+  user: {
+    name: getRandomName(),
+    color: getRandomColor()
+  }
+})
+
+// Custom handlers for editor
+const customHandlers = {
+  imageUpload: {
+    canExecute: (editor: Editor) => editor.can().insertContent({ type: 'imageUpload' }),
+    execute: (editor: Editor) => editor.chain().focus().insertContent({ type: 'imageUpload' }),
+    isActive: (editor: Editor) => editor.isActive('imageUpload'),
+    isDisabled: undefined
+  }
+} satisfies EditorCustomHandlers
+
+// Editor composables
+const { items: suggestionItems } = useEditorSuggestions(customHandlers)
+const { items: emojiItems } = useEditorEmojis()
+const { items: mentionItems } = useEditorMentions(connectedUsers)
+const { getItems: getDragHandleItems, onNodeChange } = useEditorDragHandle(customHandlers)
+const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers)
+
+// Default content - only used when Y.js document is empty
+const content = ref(`# Nuxt UI: A Modern UI Library
 
 Welcome to **Nuxt UI**, a comprehensive UI library for *Nuxt 3* applications.
 Built with [Tailwind CSS](https://tailwindcss.com) and [Reka UI](https://reka-ui.com), it provides a complete set of components for building beautiful interfaces.
@@ -70,328 +100,40 @@ Whether you're working on a personal project or building an enterprise applicati
 Visit our [documentation](https://ui.nuxt.com) to learn more and explore all available components.
 `)
 
-const customHandlers = {
-  imageUpload: {
-    canExecute: (editor: Editor) => editor.can().insertContent({ type: 'imageUpload' }),
-    execute: (editor: Editor) => editor.chain().focus().insertContent({ type: 'imageUpload' }),
-    isActive: (editor: Editor) => editor.isActive('imageUpload'),
-    isDisabled: undefined
+// Set initial content for collaborative documents (only if empty)
+const onEditorCreate = ({ editor }: { editor: Editor }) => {
+  console.log('onEditorCreate', fragment)
+  // Only set content if collaboration is enabled and Y.js fragment is empty
+  if (collaborationEnabled.value && fragment) {
+    // Wait a tick for Y.js to initialize, then check if empty
+    setTimeout(() => {
+      // Check if Y.js fragment has no content
+      console.log('setting content')
+      editor.commands.setContent(content.value, {
+        contentType: 'markdown'
+      })
+    }, 100)
   }
-} satisfies EditorCustomHandlers
-
-const toolbarItems = [{
-  kind: 'undo',
-  icon: 'i-lucide-undo'
-}, {
-  kind: 'redo',
-  icon: 'i-lucide-redo'
-}]
-
-const bubbleToolbarItems = [[{
-  icon: 'i-lucide-heading',
-  ui: {
-    label: 'text-xs'
-  },
-  items: [{
-    type: 'label',
-    label: 'Headings'
-  }, {
-    kind: 'heading',
-    level: 1,
-    icon: 'i-lucide-heading-1',
-    label: 'Heading 1'
-  }, {
-    kind: 'heading',
-    level: 2,
-    icon: 'i-lucide-heading-2',
-    label: 'Heading 2'
-  }, {
-    kind: 'heading',
-    level: 3,
-    icon: 'i-lucide-heading-3',
-    label: 'Heading 3'
-  }, {
-    kind: 'heading',
-    level: 4,
-    icon: 'i-lucide-heading-4',
-    label: 'Heading 4'
-  }]
-}, {
-  icon: 'i-lucide-list',
-  items: [{
-    kind: 'bulletList',
-    icon: 'i-lucide-list',
-    label: 'Bullet List'
-  }, {
-    kind: 'orderedList',
-    icon: 'i-lucide-list-ordered',
-    label: 'Ordered List'
-  }]
-}, {
-  kind: 'blockquote',
-  icon: 'i-lucide-text-quote'
-}, {
-  kind: 'codeBlock',
-  icon: 'i-lucide-square-code'
-}, {
-  kind: 'horizontalRule',
-  icon: 'i-lucide-separator-horizontal'
-}, {
-  kind: 'paragraph',
-  icon: 'i-lucide-type'
-}], [{
-  kind: 'mark',
-  mark: 'bold',
-  icon: 'i-lucide-bold'
-}, {
-  kind: 'mark',
-  mark: 'italic',
-  icon: 'i-lucide-italic'
-}, {
-  kind: 'mark',
-  mark: 'underline',
-  icon: 'i-lucide-underline'
-}, {
-  kind: 'mark',
-  mark: 'strike',
-  icon: 'i-lucide-strikethrough'
-}, {
-  kind: 'mark',
-  mark: 'code',
-  icon: 'i-lucide-code'
-}], [{
-  slot: 'link' as const
-}, {
-  kind: 'imageUpload',
-  icon: 'i-lucide-image'
-}], [{
-  kind: 'textAlign',
-  align: 'left',
-  icon: 'i-lucide-align-left'
-}, {
-  kind: 'textAlign',
-  align: 'center',
-  icon: 'i-lucide-align-center'
-}, {
-  kind: 'textAlign',
-  align: 'right',
-  icon: 'i-lucide-align-right'
-}, {
-  kind: 'textAlign',
-  align: 'justify',
-  icon: 'i-lucide-align-justify'
-}]] satisfies EditorToolbarItem<typeof customHandlers>[][]
-
-const imageToolbarItems = (editor: Editor): EditorToolbarItem<typeof customHandlers>[][] => {
-  const node = editor.state.doc.nodeAt(editor.state.selection.from)
-
-  return [[{
-    icon: 'i-lucide-download',
-    to: node?.attrs?.src,
-    download: true
-  }, {
-    icon: 'i-lucide-refresh-cw',
-    onClick: () => {
-      const { state } = editor
-      const { selection } = state
-
-      const pos = selection.from
-      const node = state.doc.nodeAt(pos)
-
-      if (node && node.type.name === 'image') {
-        editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).insertContentAt(pos, { type: 'imageUpload' }).run()
-      }
-    }
-  }], [{
-    icon: 'i-lucide-trash',
-    onClick: () => {
-      const { state } = editor
-      const { selection } = state
-
-      const pos = selection.from
-      const node = state.doc.nodeAt(pos)
-
-      if (node && node.type.name === 'image') {
-        editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).run()
-      }
-    }
-  }]]
 }
 
-const selectedNode = ref<{ node: Node | null, pos: number }>()
-
-const handleItems = (editor: Editor): DropdownMenuItem[][] => {
-  if (!selectedNode.value?.node) {
-    return []
-  }
-
-  return mapEditorItems(editor, [[
-    {
-      type: 'label',
-      label: upperFirst(selectedNode.value.node.type)
-    },
-    {
-      label: 'Turn into',
-      icon: 'i-lucide-repeat-2',
-      children: [
-        { kind: 'paragraph', label: 'Paragraph', icon: 'i-lucide-type' },
-        { kind: 'heading', level: 1, label: 'Heading 1', icon: 'i-lucide-heading-1' },
-        { kind: 'heading', level: 2, label: 'Heading 2', icon: 'i-lucide-heading-2' },
-        { kind: 'heading', level: 3, label: 'Heading 3', icon: 'i-lucide-heading-3' },
-        { kind: 'heading', level: 4, label: 'Heading 4', icon: 'i-lucide-heading-4' },
-        { kind: 'bulletList', label: 'Bullet List', icon: 'i-lucide-list' },
-        { kind: 'orderedList', label: 'Ordered List', icon: 'i-lucide-list-ordered' },
-        { kind: 'blockquote', label: 'Blockquote', icon: 'i-lucide-text-quote' },
-        { kind: 'codeBlock', label: 'Code Block', icon: 'i-lucide-square-code' }
-      ]
-    },
-    {
-      kind: 'clearFormatting',
-      pos: selectedNode.value?.pos,
-      label: 'Reset formatting',
-      icon: 'i-lucide-rotate-ccw'
-    }
-  ], [
-    {
-      kind: 'duplicate',
-      pos: selectedNode.value?.pos,
-      label: 'Duplicate',
-      icon: 'i-lucide-copy'
-    },
-    {
-      label: 'Copy to clipboard',
-      icon: 'i-lucide-clipboard',
-      onSelect: async () => {
-        if (!selectedNode.value) return
-
-        const pos = selectedNode.value.pos
-        const node = editor.state.doc.nodeAt(pos)
-        if (node) {
-          await navigator.clipboard.writeText(node.textContent)
-        }
-      }
-    }
-  ], [
-    {
-      kind: 'moveUp',
-      pos: selectedNode.value?.pos,
-      label: 'Move up',
-      icon: 'i-lucide-arrow-up'
-    },
-    {
-      kind: 'moveDown',
-      pos: selectedNode.value?.pos,
-      label: 'Move down',
-      icon: 'i-lucide-arrow-down'
-    }
-  ], [
-    {
-      kind: 'delete',
-      pos: selectedNode.value?.pos,
-      label: 'Delete',
-      icon: 'i-lucide-trash'
-    }
-  ]], customHandlers) as DropdownMenuItem[][]
-}
-
-const suggestionItems = [[{
-  type: 'label',
-  label: 'Style'
-}, {
-  kind: 'paragraph',
-  label: 'Paragraph',
-  icon: 'i-lucide-type'
-}, {
-  kind: 'heading',
-  level: 1,
-  label: 'Heading 1',
-  icon: 'i-lucide-heading-1'
-}, {
-  kind: 'heading',
-  level: 2,
-  label: 'Heading 2',
-  icon: 'i-lucide-heading-2'
-}, {
-  kind: 'heading',
-  level: 3,
-  label: 'Heading 3',
-  icon: 'i-lucide-heading-3'
-}, {
-  kind: 'bulletList',
-  label: 'Bullet List',
-  icon: 'i-lucide-list'
-}, {
-  kind: 'orderedList',
-  label: 'Numbered List',
-  icon: 'i-lucide-list-ordered'
-}, {
-  kind: 'blockquote',
-  label: 'Blockquote',
-  icon: 'i-lucide-text-quote'
-}, {
-  kind: 'codeBlock',
-  label: 'Code Block',
-  icon: 'i-lucide-square-code'
-}], [{
-  type: 'label',
-  label: 'Insert'
-}, {
-  kind: 'mention',
-  label: 'Mention',
-  icon: 'i-lucide-at-sign'
-}, {
-  kind: 'emoji',
-  label: 'Emoji',
-  icon: 'i-lucide-smile-plus'
-}, {
-  kind: 'imageUpload',
-  label: 'Image',
-  icon: 'i-lucide-image'
-}, {
-  kind: 'horizontalRule',
-  label: 'Horizontal Rule',
-  icon: 'i-lucide-separator-horizontal'
-}]] satisfies EditorSuggestionMenuItem<typeof customHandlers>[][]
-
-const mentionItems: EditorMentionMenuItem[] = [{
-  label: 'benjamincanac',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/739984?v=4' }
-}, {
-  label: 'HugoRCD',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/71938701?v=4' }
-}, {
-  label: 'romhml',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/25613751?v=4' }
-}, {
-  label: 'sandros94',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/13056429?v=4' }
-}, {
-  label: 'hywax',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/149865959?v=4' }
-}, {
-  label: 'J-Michalek',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/71264422?v=4' }
-}, {
-  label: 'genu',
-  avatar: { src: 'https://avatars.githubusercontent.com/u/928780?v=4' }
-}]
-
-const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.name.startsWith('regional_indicator_'))
+const extensions = computed(() => [
+  Emoji,
+  ImageUpload,
+  TextAlign.configure({
+    types: ['heading', 'paragraph']
+  }),
+  ...collaborationExtensions.value
+])
 </script>
 
 <template>
   <UEditor
     v-slot="{ editor, handlers }"
-    v-model="content"
-    :extensions="[
-      Emoji,
-      ImageUpload,
-      TextAlign.configure({
-        types: ['heading', 'paragraph']
-      })
-    ]"
-    :handlers="customHandlers"
+    :model-value="collaborationEnabled ? undefined : content"
     content-type="markdown"
+    :extensions="extensions"
+    :starter-kit="collaborationEnabled ? { undoRedo: false } : undefined"
+    :handlers="customHandlers"
     autofocus
     placeholder="Write, type '/' for commands..."
     class="min-h-screen"
@@ -399,8 +141,12 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
       base: 'p-4 sm:p-14',
       content: 'max-w-4xl mx-auto'
     }"
+    @update:model-value="!collaborationEnabled && (content = $event)"
+    @create="onEditorCreate"
   >
     <AppHeader>
+      <EditorCollaborationUsers :users="connectedUsers" />
+
       <UEditorToolbar
         :editor="editor"
         :items="toolbarItems"
@@ -426,7 +172,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
 
     <UEditorToolbar
       :editor="editor"
-      :items="imageToolbarItems(editor)"
+      :items="getImageToolbarItems(editor)"
       layout="bubble"
       :should-show="({ editor, view }: any) => {
         return editor.isActive('image') && view.hasFocus()
@@ -436,7 +182,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
     <UEditorDragHandle
       v-slot="{ ui, onClick }"
       :editor="editor"
-      @node-change="selectedNode = $event"
+      @node-change="onNodeChange"
     >
       <UButton
         icon="i-lucide-plus"
@@ -455,7 +201,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(emoji => !emoji.na
       <UDropdownMenu
         v-slot="{ open }"
         :modal="false"
-        :items="handleItems(editor)"
+        :items="getDragHandleItems(editor)"
         :content="{ side: 'left' }"
         :ui="{ content: 'w-48', label: 'text-xs' }"
         @update:open="editor.chain().setMeta('lockDragHandle', $event).run()"

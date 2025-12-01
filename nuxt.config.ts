@@ -17,17 +17,16 @@ export default defineNuxtConfig({
     }
   },
 
-  routeRules: {
-    '/': { prerender: true }
-  },
-
   compatibilityDate: '2025-01-15',
 
   vite: {
     optimizeDeps: {
       include: [
         'prosemirror-state',
-        'prosemirror-view'
+        'prosemirror-view',
+        'yjs',
+        'y-webrtc',
+        'lib0'
       ]
     }
   },
