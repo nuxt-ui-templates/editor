@@ -87,18 +87,22 @@ export function useEditorCollaboration(options: CollaborationOptions) {
   // Extensions array
   const extensions = ref<Extensions>([collaborationExtension])
 
+  // Default signaling server for WebRTC peer discovery
+  // https://github.com/yjs/y-webrtc/blob/master/src/y-webrtc.js
+  const DEFAULT_SIGNALING_SERVERS = [
+    'wss://y-webrtc-eu.fly.dev'
+  ]
+
   // Initialize provider on client side
   const initProvider = async () => {
     try {
       const { WebrtcProvider } = await import('y-webrtc')
 
-      // Use custom signaling servers if provided, otherwise use y-webrtc defaults
-      // Default servers: wss://signaling.yjs.dev, wss://y-webrtc-signaling-eu.herokuapp.com, wss://y-webrtc-signaling-us.herokuapp.com
-      const providerOptions = options.signalingServers
-        ? { signaling: options.signalingServers }
-        : {}
+      const signalingServers = options.signalingServers || DEFAULT_SIGNALING_SERVERS
 
-      provider = new WebrtcProvider(options.documentName, ydoc, providerOptions)
+      provider = new WebrtcProvider(options.documentName, ydoc, {
+        signaling: signalingServers
+      })
 
       // Set the current user's awareness state
       provider.awareness.setLocalStateField('user', options.user)
