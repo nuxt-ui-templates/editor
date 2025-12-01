@@ -2,13 +2,25 @@ import type { EditorToolbarItem, EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor } from '@tiptap/vue-3'
 
 export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers?: T) {
-  const toolbarItems = [{
+  const toolbarItems: EditorToolbarItem<T>[][] = [[{
+    kind: 'mention',
+    icon: 'i-lucide-at-sign'
+  }, {
+    kind: 'emoji',
+    icon: 'i-lucide-smile-plus'
+  }, {
+    kind: 'imageUpload',
+    icon: 'i-lucide-image'
+  }, {
+    kind: 'horizontalRule',
+    icon: 'i-lucide-separator-horizontal'
+  }], [{
     kind: 'undo',
     icon: 'i-lucide-undo'
   }, {
     kind: 'redo',
     icon: 'i-lucide-redo'
-  }]
+  }]]
 
   const bubbleToolbarItems = [[{
     icon: 'i-lucide-heading',

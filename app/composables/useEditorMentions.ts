@@ -3,7 +3,6 @@ import type { CollaborationUser } from './useEditorCollaboration'
 
 export function useEditorMentions(collaborationUsers?: Ref<CollaborationUser[]>) {
   const items = computed<EditorMentionMenuItem[]>(() => {
-    console.log('collaborationUsers', collaborationUsers?.value)
     if (!collaborationUsers?.value?.length) {
       return [{
         label: 'benjamincanac',

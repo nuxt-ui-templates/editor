@@ -1,6 +1,8 @@
 import * as Y from 'yjs'
 import Collaboration from '@tiptap/extension-collaboration'
+import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import type { Extensions } from '@tiptap/core'
+import type YPartyKitProvider from 'y-partykit/provider'
 
 export interface CollaborationUser {
   name: string
@@ -9,166 +11,111 @@ export interface CollaborationUser {
 }
 
 export interface CollaborationOptions {
-  /**
-   * The document name/room ID for collaboration
-   */
-  documentName: string
-  /**
-   * The current user information
-   */
+  roomId?: string
   user: CollaborationUser
-  /**
-   * WebRTC signaling servers (optional, uses default public servers)
-   */
-  signalingServers?: string[]
-  /**
-   * Whether collaboration is enabled (default: true)
-   */
-  enabled?: boolean
+  host?: string
 }
 
 const COLORS = [
-  '#f87171', // red-400
-  '#fb923c', // orange-400
-  '#fbbf24', // amber-400
-  '#a3e635', // lime-400
-  '#4ade80', // green-400
-  '#2dd4bf', // teal-400
-  '#22d3ee', // cyan-400
-  '#60a5fa', // blue-400
-  '#818cf8', // indigo-400
-  '#a78bfa', // violet-400
-  '#e879f9', // fuchsia-400
-  '#f472b6' // pink-400
+  '#f87171', '#fb923c', '#fbbf24', '#a3e635',
+  '#4ade80', '#2dd4bf', '#22d3ee', '#60a5fa',
+  '#818cf8', '#a78bfa', '#e879f9', '#f472b6'
 ]
 
-export function getRandomColor(): string {
-  return COLORS[Math.floor(Math.random() * COLORS.length)]!
-}
+const ADJECTIVES = ['Swift', 'Clever', 'Bright', 'Quick', 'Sharp', 'Bold', 'Calm', 'Kind']
+const ANIMALS = ['Fox', 'Owl', 'Bear', 'Wolf', 'Eagle', 'Hawk', 'Lion', 'Tiger']
 
-export function getRandomName(): string {
-  const adjectives = ['Swift', 'Clever', 'Bright', 'Quick', 'Sharp', 'Bold', 'Calm', 'Kind']
-  const animals = ['Fox', 'Owl', 'Bear', 'Wolf', 'Eagle', 'Hawk', 'Lion', 'Tiger']
-  return `${adjectives[Math.floor(Math.random() * adjectives.length)]} ${animals[Math.floor(Math.random() * animals.length)]}`
-}
+export const getRandomColor = () => COLORS[Math.floor(Math.random() * COLORS.length)]!
+export const getRandomName = () => `${ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)]} ${ANIMALS[Math.floor(Math.random() * ANIMALS.length)]}`
 
 export function useEditorCollaboration(options: CollaborationOptions) {
-  const enabled = options.enabled ?? true
+  const { roomId, user, host } = options
 
-  // Return empty state if disabled
-  if (!enabled) {
-    return {
-      ydoc: null,
-      fragment: null,
-      isConnected: ref(false),
-      isSynced: ref(false),
-      connectedUsers: ref<CollaborationUser[]>([]),
-      extensions: ref<Extensions>([]),
-      updateUser: () => {}
-    }
-  }
-
-  const ydoc = new Y.Doc()
-  // Pre-initialize the prosemirror fragment to prevent "Unexpected case" errors
-  const fragment = ydoc.getXmlFragment('prosemirror')
+  // Collaboration is only active if both roomId AND host are provided
+  const isEnabled = !!roomId && !!host
 
   const isConnected = ref(false)
-  const isSynced = ref(false)
   const connectedUsers = ref<CollaborationUser[]>([])
+  const extensions = shallowRef<Extensions>([])
+  const ready = ref(false)
 
-  // We need to dynamically import y-webrtc on client side only
-  let provider: Awaited<typeof import('y-webrtc')>['WebrtcProvider'] extends new (...args: infer A) => infer R ? R : never
+  // Return early if disabled or no host provided
+  if (!isEnabled) {
+    return {
+      enabled: false as const,
+      ready: ref(true), // Always ready when disabled
+      isConnected,
+      connectedUsers,
+      extensions,
+      updateUser: (_user: Partial<CollaborationUser>) => {}
+    }
+  }
 
-  // Create collaboration extension with the Y.Doc fragment
-  const collaborationExtension = Collaboration.configure({
-    fragment
-  })
+  // Y.js document
+  const ydoc = new Y.Doc()
 
-  // Extensions array
-  const extensions = ref<Extensions>([collaborationExtension])
+  // Provider instance
+  let provider: YPartyKitProvider | null = null
 
-  // Default signaling server for WebRTC peer discovery
-  // https://github.com/yjs/y-webrtc/blob/master/src/y-webrtc.js
-  const DEFAULT_SIGNALING_SERVERS = [
-    'wss://y-webrtc-eu.fly.dev'
-  ]
+  const updateUsers = () => {
+    const states = provider?.awareness?.getStates()
+    if (!states) return
 
-  // Initialize provider on client side
-  const initProvider = async () => {
-    try {
-      const { WebrtcProvider } = await import('y-webrtc')
+    connectedUsers.value = Array.from(states.values())
+      .filter((state): state is { user: CollaborationUser } => !!state.user)
+      .map(state => state.user)
+  }
 
-      const signalingServers = options.signalingServers || DEFAULT_SIGNALING_SERVERS
+  const updateUser = (newUser: Partial<CollaborationUser>) => {
+    const current = provider?.awareness?.getLocalState()?.user as CollaborationUser | undefined
+    if (current) {
+      provider?.awareness?.setLocalStateField('user', { ...current, ...newUser })
+    }
+  }
 
-      provider = new WebrtcProvider(options.documentName, ydoc, {
-        signaling: signalingServers
+  // Initialize on client
+  onMounted(async () => {
+    const { default: Provider } = await import('y-partykit/provider')
+
+    provider = new Provider(host!, roomId!, ydoc)
+    provider.awareness.setLocalStateField('user', user)
+
+    // Now add caret extension with provider
+    extensions.value = [
+      Collaboration.configure({ document: ydoc }),
+      CollaborationCaret.configure({
+        provider,
+        user
       })
+    ]
 
-      // Set the current user's awareness state
-      provider.awareness.setLocalStateField('user', options.user)
+    // Mark as ready so editor can render
+    ready.value = true
 
-      // Mark as connected once provider is ready
-      // The 'synced' event only fires when there are other peers
-      isConnected.value = true
-
-      // Track sync status with other peers
-      provider.on('synced', ({ synced }: { synced: boolean }) => {
-        isSynced.value = synced
-      })
-
-      // Track connected users via awareness
-      const updateUsers = () => {
-        const states = provider?.awareness.getStates()
-        if (!states) return
-
-        const users: CollaborationUser[] = []
-        states.forEach((state) => {
-          if (state.user) {
-            users.push(state.user as CollaborationUser)
-          }
-        })
-        connectedUsers.value = users
+    provider.on('status', ({ status }: { status: string }) => {
+      isConnected.value = status === 'connected'
+      if (status === 'connected') {
+        updateUsers()
       }
+    })
 
-      provider.awareness.on('change', updateUsers)
-      updateUsers()
-    } catch (error) {
-      console.error('Failed to initialize collaboration provider:', error)
-    }
-  }
+    provider.awareness.on('change', updateUsers)
+    provider.awareness.on('update', updateUsers)
+    updateUsers()
 
-  // Initialize on mount (client-side only)
-  onMounted(() => {
-    initProvider()
+    isConnected.value = provider.wsconnected
   })
 
-  // Cleanup on unmount
+  // Cleanup
   onUnmounted(() => {
-    try {
-      provider?.disconnect()
-      provider?.destroy()
-      ydoc.destroy()
-    } catch {
-      // Ignore cleanup errors
-    }
+    provider?.destroy()
+    ydoc.destroy()
   })
-
-  // Update user information
-  const updateUser = (user: Partial<CollaborationUser>) => {
-    const currentUser = provider?.awareness.getLocalState()?.user as CollaborationUser | undefined
-    if (currentUser) {
-      provider?.awareness.setLocalStateField('user', {
-        ...currentUser,
-        ...user
-      })
-    }
-  }
 
   return {
-    ydoc,
-    fragment,
+    enabled: true as const,
+    ready,
     isConnected,
-    isSynced,
     connectedUsers,
     extensions,
     updateUser

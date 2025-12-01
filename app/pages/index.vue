@@ -5,14 +5,19 @@ import { Emoji } from '@tiptap/extension-emoji'
 import TextAlign from '@tiptap/extension-text-align'
 import ImageUpload from '../components/editor/ImageUpload'
 
-// Collaboration is only enabled when a room is specified via ?room=xxx
 const route = useRoute()
-const roomId = computed(() => route.query.room as string | undefined)
-const collaborationEnabled = computed(() => !!roomId.value)
+const runtimeConfig = useRuntimeConfig()
 
-const { extensions: collaborationExtensions, connectedUsers, fragment } = useEditorCollaboration({
-  documentName: roomId.value || '',
-  enabled: collaborationEnabled.value,
+const roomId = computed(() => route.query.room as string | undefined)
+
+const {
+  enabled: collaborationEnabled,
+  ready: collaborationReady,
+  extensions: collaborationExtensions,
+  connectedUsers
+} = useEditorCollaboration({
+  roomId: roomId.value,
+  host: runtimeConfig.public.partykitHost,
   user: {
     name: getRandomName(),
     color: getRandomColor()
@@ -29,90 +34,100 @@ const customHandlers = {
   }
 } satisfies EditorCustomHandlers
 
-// Editor composables
-const { items: suggestionItems } = useEditorSuggestions(customHandlers)
 const { items: emojiItems } = useEditorEmojis()
 const { items: mentionItems } = useEditorMentions(connectedUsers)
+const { items: suggestionItems } = useEditorSuggestions(customHandlers)
 const { getItems: getDragHandleItems, onNodeChange } = useEditorDragHandle(customHandlers)
 const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers)
 
 // Default content - only used when Y.js document is empty
-const content = ref(`# Nuxt UI: A Modern UI Library
+const content = ref(`# Nuxt UI Editor
 
-Welcome to **Nuxt UI**, a comprehensive UI library for *Nuxt 3* applications.
-Built with [Tailwind CSS](https://tailwindcss.com) and [Reka UI](https://reka-ui.com), it provides a complete set of components for building beautiful interfaces.
-
-![Image Placeholder](/placeholder.jpeg)
-
-## Key Features
-
-Nuxt UI combines the best of modern web development
-
-- **Fully typed** with TypeScript support
-- *Customizable* theme system with semantic colors
-- <u>Accessible</u> components following ARIA guidelines
-- Built on top of \`Reka UI\` primitives
-- Support for ~~legacy browsers~~ modern standards
-
-### Getting Started
-
-Install Nuxt UI in your project with the following command:
-
-\`\`\`
-npx nuxi@latest module add ui
-\`\`\`
-
-> *Nuxt UI is designed to be intuitive and easy to use, whether you're building a simple landing page or a complex application.*
-
-### Component Categories
-
-1. Layout components (Container, Card, Accordion)
-2. Form components (Input, Select, Checkbox)
-3. Navigation (Navbar, Sidebar, Breadcrumb)
-4. Feedback (Alert, Toast, Modal)
-
-#### Code Example
-
-Here's a simple example using the \`Button\` component:
-
-\`\`\`
-<template>
-  <UButton color="primary">
-    Click me
-  </UButton>
-</template>
-\`\`\`
+This editor supports **real-time collaboration**. Add \`?room=your-room-name\` to the URL and share the link to collaborate with others.
 
 ---
 
-## Advanced Features
+## Rich Text Formatting
 
-Powerful capabilities for modern applications
+This editor supports **bold**, *italic*, <u>underline</u>, ~~strikethrough~~, and \`inline code\`.
 
-- Dark mode support out of the box
-- Keyboard shortcuts for improved accessibility
-- Nested lists support:
+![Image Placeholder](/placeholder.jpeg)
+
+## Slash Commands
+
+Type \`/\` anywhere to open the command menu and quickly insert:
+
+- Headings, paragraphs, and blockquotes
+- Bullet lists and numbered lists
+- Code blocks and horizontal rules
+- Images and more
+
+## Mentions & Emojis
+
+Mention collaborators with \`@\` and add emojis with \`:\` syntax :rocket:
+
+> *Pro tip: Use the bubble toolbar that appears when you select text for quick formatting.*
+
+## Code Blocks
+
+\`\`\`javascript
+const editor = new Editor({
+  extensions: [StarterKit, Collaboration],
+  content: 'Hello World!'
+})
+\`\`\`
+
+## Lists
+
+Organize your content with lists:
+
+1. Numbered lists for sequential items
+2. With automatic numbering
+3. And proper indentation
+
+Or use bullet points:
+
+- First item
+- Second item
+  - Nested items work too
   - With multiple levels
-  - And proper spacing
 
-Whether you're working on a personal project or building an enterprise application, Nuxt UI provides all the tools you need to create stunning user interfaces quickly and efficiently. The library is constantly evolving with new components and improvements based on community feedback.
+## Drag & Drop
 
-Visit our [documentation](https://ui.nuxt.com) to learn more and explore all available components.
+Use the drag handle on the left side of any block to:
+
+- Reorder content by dragging
+- Duplicate blocks
+- Delete blocks
+- Convert between block types
+
+---
+
+Visit the [Nuxt UI documentation](https://ui.nuxt.com/docs/components/editor) to learn more about the Editor component.
 `)
 
 // Set initial content for collaborative documents (only if empty)
-const onEditorCreate = ({ editor }: { editor: Editor }) => {
-  console.log('onEditorCreate', fragment)
-  // Only set content if collaboration is enabled and Y.js fragment is empty
-  if (collaborationEnabled.value && fragment) {
-    // Wait a tick for Y.js to initialize, then check if empty
-    setTimeout(() => {
-      // Check if Y.js fragment has no content
-      console.log('setting content')
-      editor.commands.setContent(content.value, {
-        contentType: 'markdown'
-      })
-    }, 100)
+function onCreate({ editor }: { editor: Editor }) {
+  if (!collaborationEnabled) return
+
+  const storageKey = `editor-initialized-${roomId.value}`
+
+  // Skip if already initialized this session (handles HMR)
+  if (sessionStorage.getItem(storageKey)) return
+
+  // Wait for Y.js to sync existing content from server before checking if empty
+  setTimeout(() => {
+    const text = editor.state.doc.textContent.trim()
+    if (!text) {
+      editor.commands.setContent(content.value, { contentType: 'markdown' })
+    }
+    sessionStorage.setItem(storageKey, 'true')
+  }, 500)
+}
+
+function onUpdate(value: string) {
+  if (!collaborationEnabled) {
+    content.value = value
   }
 }
 
@@ -128,6 +143,7 @@ const extensions = computed(() => [
 
 <template>
   <UEditor
+    v-if="collaborationReady"
     v-slot="{ editor, handlers }"
     :model-value="collaborationEnabled ? undefined : content"
     content-type="markdown"
@@ -141,8 +157,8 @@ const extensions = computed(() => [
       base: 'p-4 sm:p-14',
       content: 'max-w-4xl mx-auto'
     }"
-    @update:model-value="!collaborationEnabled && (content = $event)"
-    @create="onEditorCreate"
+    @update:model-value="onUpdate"
+    @create="onCreate"
   >
     <AppHeader>
       <EditorCollaborationUsers :users="connectedUsers" />
@@ -218,17 +234,17 @@ const extensions = computed(() => [
       </UDropdownMenu>
     </UEditorDragHandle>
 
-    <UEditorSuggestionMenu
+    <UEditorEmojiMenu
       :editor="editor"
-      :items="suggestionItems"
+      :items="emojiItems"
     />
     <UEditorMentionMenu
       :editor="editor"
       :items="mentionItems"
     />
-    <UEditorEmojiMenu
+    <UEditorSuggestionMenu
       :editor="editor"
-      :items="emojiItems"
+      :items="suggestionItems"
     />
   </UEditor>
 </template>

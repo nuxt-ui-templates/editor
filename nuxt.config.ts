@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     }
   },
 
+  runtimeConfig: {
+    public: {
+      partykitHost: ''
+    }
+  },
+
   compatibilityDate: '2025-01-15',
 
   vite: {
@@ -25,8 +31,7 @@ export default defineNuxtConfig({
         'prosemirror-state',
         'prosemirror-view',
         'yjs',
-        'y-webrtc',
-        'lib0'
+        'y-partykit/provider'
       ]
     }
   },

@@ -15,12 +15,11 @@
     "@iconify-json/simple-icons": "^1.2.60",
     "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@1e44530",
     "@tiptap/extension-collaboration": "^3.11.1",
+    "@tiptap/extension-collaboration-caret": "^3.11.1",
     "@tiptap/extension-emoji": "^3.11.1",
     "@tiptap/extension-text-align": "^3.11.1",
-    "@tiptap/y-tiptap": "^3.0.1",
     "nuxt": "^4.2.1",
-    "y-protocols": "^1.0.6",
-    "y-webrtc": "^10.3.0",
+    "y-partykit": "^0.0.25",
     "yjs": "^13.6.27"
   },
   "devDependencies": {
