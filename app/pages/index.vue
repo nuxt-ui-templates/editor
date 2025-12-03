@@ -8,7 +8,14 @@ import ImageUpload from '../components/editor/ImageUpload'
 const route = useRoute()
 const runtimeConfig = useRuntimeConfig()
 
-const roomId = computed(() => route.query.room as string | undefined)
+const room = computed(() => route.query.room as string | undefined)
+
+const user = useState('user', () => ({
+  name: getRandomName(),
+  color: getRandomColor()
+}))
+
+const appConfig = useAppConfig()
 
 const {
   enabled: collaborationEnabled,
@@ -16,13 +23,18 @@ const {
   extensions: collaborationExtensions,
   connectedUsers
 } = useEditorCollaboration({
-  roomId: roomId.value,
+  room: room.value,
   host: runtimeConfig.public.partykitHost,
   user: {
-    name: getRandomName(),
-    color: getRandomColor()
+    name: user.value.name,
+    color: COLORS[user.value.color]!
   }
 })
+
+// Set primary color for the app
+if (collaborationEnabled) {
+  appConfig.ui.colors.primary = user.value.color
+}
 
 // Custom handlers for editor
 const customHandlers = {
@@ -41,7 +53,7 @@ const { getItems: getDragHandleItems, onNodeChange } = useEditorDragHandle(custo
 const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers)
 
 // Default content - only used when Y.js document is empty
-const content = ref(`# Nuxt UI Editor
+const content = ref(`# Nuxt Editor Template
 
 This editor supports **real-time collaboration**. Add \`?room=your-room-name\` to the URL and share the link to collaborate with others.
 
@@ -110,7 +122,7 @@ Visit the [Nuxt UI documentation](https://ui.nuxt.com/docs/components/editor) to
 function onCreate({ editor }: { editor: Editor }) {
   if (!collaborationEnabled) return
 
-  const storageKey = `editor-initialized-${roomId.value}`
+  const storageKey = `editor-initialized-${room.value}`
 
   // Skip if already initialized this session (handles HMR)
   if (sessionStorage.getItem(storageKey)) return

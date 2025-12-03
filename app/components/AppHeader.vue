@@ -1,5 +1,8 @@
 <template>
-  <UHeader :toggle="false">
+  <UHeader
+    :toggle="false"
+    :ui="{ container: 'sm:px-14!' }"
+  >
     <template #left>
       <NuxtLink to="/">
         <AppLogo class="w-auto h-6 shrink-0" />

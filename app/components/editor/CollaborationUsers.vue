@@ -17,9 +17,9 @@ defineProps<{
           <UAvatar
             :alt="user.name"
             size="sm"
-            :style="{ color: user.color }"
-            :ui="{ fallback: 'text-inherit text-xs font-bold' }"
-            class="rounded-md"
+            :style="{
+              color: user.color
+            }"
           />
         </UTooltip>
       </template>
