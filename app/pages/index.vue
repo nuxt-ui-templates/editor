@@ -208,7 +208,7 @@ const extensions = computed(() => [
         :class="ui.handle()"
         @click="(e: MouseEvent) => {
           e.stopPropagation()
-          const node = onClick(e)
+          const node = onClick()
 
           handlers.suggestion?.execute(editor, { pos: node?.pos }).run()
         }"

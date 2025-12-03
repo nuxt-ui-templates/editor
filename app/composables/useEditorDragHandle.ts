@@ -1,13 +1,13 @@
 import { upperFirst } from 'scule'
 import type { DropdownMenuItem, EditorCustomHandlers } from '@nuxt/ui'
-import type { Editor, Node } from '@tiptap/vue-3'
+import type { Editor, JSONContent } from '@tiptap/vue-3'
 import { mapEditorItems } from '@nuxt/ui/utils/editor'
 
 export function useEditorDragHandle<T extends EditorCustomHandlers>(customHandlers?: T) {
-  const selectedNode = ref<{ node: Node | null, pos: number }>()
+  const selectedNode = ref<{ node: JSONContent | null, pos: number }>()
 
   const getItems = (editor: Editor): DropdownMenuItem[][] => {
-    if (!selectedNode.value?.node) {
+    if (!selectedNode.value?.node?.type) {
       return []
     }
 
@@ -80,7 +80,7 @@ export function useEditorDragHandle<T extends EditorCustomHandlers>(customHandle
     ]], customHandlers) as DropdownMenuItem[][]
   }
 
-  const onNodeChange = (event: { node: Node | null, pos: number }) => {
+  const onNodeChange = (event: { node: JSONContent | null, pos: number }) => {
     selectedNode.value = event
   }
 
