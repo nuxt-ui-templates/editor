@@ -16,7 +16,7 @@ const disabled = computed(() => {
   return selection.empty && !props.editor.isActive('link')
 })
 
-watch(() => props.editor, (editor) => {
+watch(() => props.editor, (editor, _, onCleanup) => {
   if (!editor) return
 
   const updateUrl = () => {
@@ -27,7 +27,7 @@ watch(() => props.editor, (editor) => {
   updateUrl()
   editor.on('selectionUpdate', updateUrl)
 
-  onBeforeUnmount(() => {
+  onCleanup(() => {
     editor.off('selectionUpdate', updateUrl)
   })
 }, { immediate: true })
@@ -84,7 +84,6 @@ function handleKeyDown(event: KeyboardEvent) {
 <template>
   <UPopover
     v-model:open="open"
-    :portal="false"
     :ui="{ content: 'p-0.5' }"
   >
     <UButton
