@@ -1,7 +1,10 @@
 <template>
   <UHeader
     :toggle="false"
-    :ui="{ container: 'sm:px-14!' }"
+    :ui="{
+      container: 'sm:px-14!',
+      right: 'justify-end-safe overflow-x-auto py-2'
+    }"
   >
     <template #left>
       <NuxtLink to="/">
