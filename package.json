@@ -19,7 +19,7 @@
     "@tiptap/extension-emoji": "^3.12.0",
     "@tiptap/extension-text-align": "^3.12.0",
     "@vueuse/core": "^14.1.0",
-    "nuxt": "^4.2.1",
+    "nuxt": "^4.2.2",
     "y-partykit": "^0.0.33",
     "yjs": "^13.6.27"
   },
