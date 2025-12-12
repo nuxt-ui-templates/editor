@@ -3,6 +3,13 @@ import type { EditorSuggestionMenuItem, EditorCustomHandlers } from '@nuxt/ui'
 export function useEditorSuggestions<T extends EditorCustomHandlers>(_customHandlers?: T) {
   const items = [[{
     type: 'label',
+    label: 'AI'
+  }, {
+    kind: 'aiContinue',
+    label: 'Continue writing',
+    icon: 'i-lucide-sparkles'
+  }], [{
+    type: 'label',
     label: 'Style'
   }, {
     kind: 'paragraph',

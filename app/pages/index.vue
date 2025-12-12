@@ -17,6 +17,10 @@ const user = useState('user', () => ({
 
 const appConfig = useAppConfig()
 
+const editorRef = useTemplateRef('editorRef')
+
+const { extension: completionExtension, handlers: aiHandlers, isLoading: aiLoading } = useEditorCompletion(editorRef)
+
 const {
   enabled: collaborationEnabled,
   ready: collaborationReady,
@@ -36,21 +40,22 @@ if (collaborationEnabled) {
   appConfig.ui.colors.primary = user.value.color
 }
 
-// Custom handlers for editor
+// Custom handlers for editor (merged with AI handlers)
 const customHandlers = {
   imageUpload: {
     canExecute: (editor: Editor) => editor.can().insertContent({ type: 'imageUpload' }),
     execute: (editor: Editor) => editor.chain().focus().insertContent({ type: 'imageUpload' }),
     isActive: (editor: Editor) => editor.isActive('imageUpload'),
     isDisabled: undefined
-  }
+  },
+  ...aiHandlers
 } satisfies EditorCustomHandlers
 
 const { items: emojiItems } = useEditorEmojis()
 const { items: mentionItems } = useEditorMentions(connectedUsers)
 const { items: suggestionItems } = useEditorSuggestions(customHandlers)
 const { getItems: getDragHandleItems, onNodeChange } = useEditorDragHandle(customHandlers)
-const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers)
+const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers, { aiLoading })
 
 // Default content - only used when Y.js document is empty
 const content = ref(`# Nuxt Editor Template
@@ -149,6 +154,7 @@ const extensions = computed(() => [
   TextAlign.configure({
     types: ['heading', 'paragraph']
   }),
+  completionExtension,
   ...collaborationExtensions.value
 ])
 </script>
@@ -156,6 +162,7 @@ const extensions = computed(() => [
 <template>
   <UEditor
     v-if="collaborationReady"
+    ref="editorRef"
     v-slot="{ editor, handlers }"
     :model-value="collaborationEnabled ? undefined : content"
     content-type="markdown"

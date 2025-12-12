@@ -1,7 +1,13 @@
 import type { EditorToolbarItem, EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor } from '@tiptap/vue-3'
 
-export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers?: T) {
+interface UseEditorToolbarOptions {
+  aiLoading?: Ref<boolean | undefined>
+}
+
+export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers?: T, options: UseEditorToolbarOptions = {}) {
+  const { aiLoading } = options
+
   const toolbarItems: EditorToolbarItem<T>[][] = [[{
     kind: 'undo',
     icon: 'i-lucide-undo',
@@ -17,7 +23,58 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
     tooltip: { text: 'Add image' }
   }]]
 
-  const bubbleToolbarItems = [[{
+  const bubbleToolbarItems = computed(() => [[{
+    icon: 'i-lucide-sparkles',
+    label: 'Improve',
+    activeColor: 'neutral',
+    activeVariant: 'ghost',
+    loading: aiLoading?.value,
+    items: [{
+      kind: 'aiFix',
+      icon: 'i-lucide-spell-check',
+      label: 'Fix spelling & grammar'
+    }, {
+      kind: 'aiExtend',
+      icon: 'i-lucide-unfold-vertical',
+      label: 'Extend text'
+    }, {
+      kind: 'aiReduce',
+      icon: 'i-lucide-fold-vertical',
+      label: 'Reduce text'
+    }, {
+      kind: 'aiSimplify',
+      icon: 'i-lucide-lightbulb',
+      label: 'Simplify text'
+    }, {
+      kind: 'aiContinue',
+      icon: 'i-lucide-text',
+      label: 'Continue sentence'
+    }, {
+      kind: 'aiSummarize',
+      icon: 'i-lucide-list',
+      label: 'Summarize'
+    }, {
+      icon: 'i-lucide-languages',
+      label: 'Translate',
+      children: [{
+        kind: 'aiTranslate',
+        language: 'English',
+        label: 'English'
+      }, {
+        kind: 'aiTranslate',
+        language: 'French',
+        label: 'French'
+      }, {
+        kind: 'aiTranslate',
+        language: 'Spanish',
+        label: 'Spanish'
+      }, {
+        kind: 'aiTranslate',
+        language: 'German',
+        label: 'German'
+      }]
+    }]
+  }], [{
     label: 'Turn into',
     trailingIcon: 'i-lucide-chevron-down',
     activeColor: 'neutral',
@@ -132,7 +189,7 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
       icon: 'i-lucide-align-justify',
       label: 'Align Justify'
     }]
-  }]] satisfies EditorToolbarItem<T>[][]
+  }]] satisfies EditorToolbarItem<T>[][])
 
   const getImageToolbarItems = (editor: Editor): EditorToolbarItem<T>[][] => {
     const node = editor.state.doc.nodeAt(editor.state.selection.from)

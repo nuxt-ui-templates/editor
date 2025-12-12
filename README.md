@@ -26,6 +26,7 @@ A rich text editor template built with [Nuxt UI](https://ui.nuxt.com) and [TipTa
 - **Emoji Picker** - Full GitHub emoji set with `:emoji:` syntax
 - **Text Alignment** - Left, center, right, and justify alignment options
 - **Markdown Support** - Content type set to markdown for easy serialization
+- **AI-powered Features** - Inline completions and text transformations powered by [Vercel AI SDK](https://ai-sdk.dev/)
 - **Real-time Collaboration** - Optional collaborative editing powered by [PartyKit](https://partykit.io)
 
 ## Quick Start
@@ -45,6 +46,30 @@ Make sure to install the dependencies:
 ```bash
 pnpm install
 ```
+
+### AI Integration (Optional)
+
+This template includes AI-powered writing assistance using the [Vercel AI SDK](https://ai-sdk.dev/) and its [`useCompletion`](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-completion) composable for streaming text generation.
+
+**AI Features:**
+
+- **Inline Completions** - Get AI suggestions as you type, accept with `Tab`
+- **Continue Writing** - Extend your content from the cursor position
+- **Fix Spelling & Grammar** - Automatically correct selected text
+- **Extend/Reduce Text** - Make selected content longer or shorter
+- **Simplify** - Rewrite complex text in simpler terms
+- **Summarize** - Generate a summary of selected content
+- **Translate** - Translate selected text to English, French, Spanish, or German
+
+Set your AI provider configuration in `.env`:
+
+```bash
+# AI Configuration via Vercel AI Gateway (unified API for all providers)
+AI_GATEWAY_API_KEY=<your-vercel-ai-gateway-api-key>
+```
+
+> [!TIP] to="https://vercel.com/docs/ai-gateway"
+> With Vercel AI Gateway, you don't need individual API keys for OpenAI, Anthropic, etc. The AI Gateway provides a unified API to access hundreds of models through a single endpoint with automatic load balancing, fallbacks, and spend monitoring.
 
 ### Collaboration (Optional)
 
