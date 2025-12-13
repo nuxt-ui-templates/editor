@@ -22,7 +22,21 @@
         class="h-7"
       />
 
-      <UColorModeButton size="sm" />
+      <div
+        role="group"
+        class="flex items-center gap-0.5"
+      >
+        <UColorModeButton size="sm" />
+
+        <UButton
+          icon="i-simple-icons-github"
+          color="neutral"
+          variant="ghost"
+          size="sm"
+          to="https://github.com/nuxt-ui-templates/editor"
+          target="_blank"
+        />
+      </div>
     </template>
   </UHeader>
 </template>
