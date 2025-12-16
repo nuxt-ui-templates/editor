@@ -11,8 +11,8 @@ useHead({
   }
 })
 
-const title = 'Nuxt Editor Template'
-const description = 'A production-ready editor template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
+const title = 'Nuxt UI Editor Template'
+const description = 'A Notion-like WYSIWYG editor with AI-powered autocompletion in Vue & Nuxt.'
 
 useSeoMeta({
   title,
