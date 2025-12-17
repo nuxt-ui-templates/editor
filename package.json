@@ -12,25 +12,25 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^2.0.21",
-    "@ai-sdk/vue": "^2.0.112",
-    "@iconify-json/lucide": "^1.2.80",
-    "@iconify-json/simple-icons": "^1.2.62",
-    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@feb756d",
+    "@ai-sdk/vue": "^2.0.114",
+    "@iconify-json/lucide": "^1.2.81",
+    "@iconify-json/simple-icons": "^1.2.63",
+    "@nuxt/ui": "^4.3.0",
     "@tiptap/extension-collaboration": "^3.13.0",
     "@tiptap/extension-collaboration-caret": "^3.13.0",
     "@tiptap/extension-emoji": "^3.13.0",
     "@tiptap/extension-text-align": "^3.13.0",
     "@vueuse/core": "^14.1.0",
-    "ai": "^5.0.112",
+    "ai": "^5.0.114",
     "nuxt": "^4.2.2",
     "y-partykit": "^0.0.33",
-    "yjs": "^13.6.27"
+    "yjs": "^13.6.28"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.12.1",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.8"
   },
-  "packageManager": "pnpm@10.25.0"
+  "packageManager": "pnpm@10.26.0"
 }
