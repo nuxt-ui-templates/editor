@@ -11,8 +11,8 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^2.0.23",
-    "@ai-sdk/vue": "^2.0.116",
+    "@ai-sdk/gateway": "^3.0.5",
+    "@ai-sdk/vue": "^3.0.6",
     "@iconify-json/lucide": "^1.2.82",
     "@iconify-json/simple-icons": "^1.2.63",
     "@nuxt/ui": "^4.3.0",
@@ -21,7 +21,7 @@
     "@tiptap/extension-emoji": "^3.14.0",
     "@tiptap/extension-text-align": "^3.14.0",
     "@vueuse/core": "^14.1.0",
-    "ai": "^5.0.116",
+    "ai": "^6.0.6",
     "nuxt": "^4.2.2",
     "y-partykit": "^0.0.33",
     "yjs": "^13.6.28"
