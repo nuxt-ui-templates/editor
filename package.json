@@ -21,7 +21,7 @@
     "@tiptap/extension-emoji": "^3.14.0",
     "@tiptap/extension-text-align": "^3.14.0",
     "@vueuse/core": "^14.1.0",
-    "ai": "^5.0.116",
+    "ai": "^6.0.6",
     "nuxt": "^4.2.2",
     "y-partykit": "^0.0.33",
     "yjs": "^13.6.28"
