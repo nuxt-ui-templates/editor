@@ -14,7 +14,7 @@
     "@ai-sdk/gateway": "^3.0.5",
     "@ai-sdk/vue": "^3.0.6",
     "@iconify-json/lucide": "^1.2.82",
-    "@iconify-json/simple-icons": "^1.2.63",
+    "@iconify-json/simple-icons": "^1.2.64",
     "@nuxt/ui": "^4.3.0",
     "@tiptap/extension-collaboration": "^3.14.0",
     "@tiptap/extension-collaboration-caret": "^3.14.0",
@@ -24,7 +24,7 @@
     "ai": "^6.0.6",
     "nuxt": "^4.2.2",
     "y-partykit": "^0.0.33",
-    "yjs": "^13.6.28"
+    "yjs": "^13.6.29"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.12.1",
@@ -32,5 +32,5 @@
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.1"
   },
-  "packageManager": "pnpm@10.26.1"
+  "packageManager": "pnpm@10.27.0"
 }
