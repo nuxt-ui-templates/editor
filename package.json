@@ -23,6 +23,8 @@
     "@vueuse/core": "^14.1.0",
     "ai": "^6.0.6",
     "nuxt": "^4.2.2",
+    "shiki": "^3.20.0",
+    "tiptap-extension-code-block-shiki": "^1.0.0",
     "y-partykit": "^0.0.33",
     "yjs": "^13.6.28"
   },

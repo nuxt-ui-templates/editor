@@ -3,6 +3,7 @@ import type { EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor } from '@tiptap/core'
 import { Emoji } from '@tiptap/extension-emoji'
 import TextAlign from '@tiptap/extension-text-align'
+import CodeBlockShiki from 'tiptap-extension-code-block-shiki'
 import ImageUpload from '../components/editor/ImageUpload'
 
 const route = useRoute()
@@ -155,6 +156,13 @@ const extensions = computed(() => [
   ImageUpload,
   TextAlign.configure({
     types: ['heading', 'paragraph']
+  }),
+  CodeBlockShiki.configure({
+    defaultTheme: 'material-theme',
+    themes: {
+      light: 'material-theme-lighter',
+      dark: 'material-theme-palenight'
+    }
   }),
   completionExtension,
   ...collaborationExtensions.value
