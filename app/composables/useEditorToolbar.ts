@@ -29,6 +29,9 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
     activeColor: 'neutral',
     activeVariant: 'ghost',
     loading: aiLoading?.value,
+    content: {
+      align: 'start'
+    },
     items: [{
       kind: 'aiFix',
       icon: 'i-lucide-spell-check',
