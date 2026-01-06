@@ -4,7 +4,7 @@ import type { Editor } from '@tiptap/core'
 import { Emoji } from '@tiptap/extension-emoji'
 import TextAlign from '@tiptap/extension-text-align'
 import CodeBlockShiki from 'tiptap-extension-code-block-shiki'
-import ImageUpload from '../components/editor/ImageUpload'
+import ImageUpload from '~/components/editor/ImageUploadExtension'
 
 const route = useRoute()
 const runtimeConfig = useRuntimeConfig()
