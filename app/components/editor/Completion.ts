@@ -6,6 +6,11 @@ import { useDebounceFn } from '@vueuse/core'
 
 export interface CompletionOptions {
   /**
+   * Whether to automatically trigger completion while typing
+   * @defaultValue false
+   */
+  autoTrigger?: boolean
+  /**
    * Debounce delay in ms before triggering completion
    * @defaultValue 250
    */
@@ -45,6 +50,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
 
   addOptions() {
     return {
+      autoTrigger: false,
       debounce: 250,
       triggerCharacters: ['/', ':', '@'],
       onTrigger: undefined,
@@ -140,8 +146,10 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
       this.options.onDismiss?.()
     }
 
-    // Debounced trigger check
-    this.storage.debouncedTrigger?.(editor as unknown as Editor)
+    // Debounced trigger check (only if autoTrigger is enabled)
+    if (this.options.autoTrigger) {
+      this.storage.debouncedTrigger?.(editor as unknown as Editor)
+    }
   },
 
   onSelectionUpdate() {
