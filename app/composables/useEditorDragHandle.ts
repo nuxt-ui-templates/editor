@@ -3,20 +3,17 @@ import type { DropdownMenuItem, EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor, JSONContent } from '@tiptap/vue-3'
 import { mapEditorItems } from '@nuxt/ui/utils/editor'
 
+const CONVERTIBLE_TYPES = ['paragraph', 'heading', 'bulletList', 'orderedList', 'blockquote', 'codeBlock', 'listItem', 'taskItem']
+
 export function useEditorDragHandle<T extends EditorCustomHandlers>(customHandlers?: T) {
   const selectedNode = ref<{ node: JSONContent | null, pos: number }>()
 
-  const getItems = (editor: Editor): DropdownMenuItem[][] => {
-    if (!selectedNode.value?.node?.type) {
-      return []
-    }
+  const getTypeSpecificItems = (editor: Editor, nodeType: string): DropdownMenuItem[] => {
+    const pos = selectedNode.value?.pos
 
-    return mapEditorItems(editor, [[
-      {
-        type: 'label',
-        label: upperFirst(selectedNode.value.node.type)
-      },
-      {
+    // Items for convertible block types
+    if (CONVERTIBLE_TYPES.includes(nodeType)) {
+      return [{
         label: 'Turn into',
         icon: 'i-lucide-repeat-2',
         children: [
@@ -30,13 +27,77 @@ export function useEditorDragHandle<T extends EditorCustomHandlers>(customHandle
           { kind: 'blockquote', label: 'Blockquote', icon: 'i-lucide-text-quote' },
           { kind: 'codeBlock', label: 'Code Block', icon: 'i-lucide-square-code' }
         ]
-      },
-      {
+      }, {
         kind: 'clearFormatting',
-        pos: selectedNode.value?.pos,
+        pos,
         label: 'Reset formatting',
         icon: 'i-lucide-rotate-ccw'
-      }
+      }]
+    }
+
+    // Items for images
+    if (nodeType === 'image') {
+      const node = pos !== undefined ? editor.state.doc.nodeAt(pos) : null
+      return [{
+        label: 'Download image',
+        icon: 'i-lucide-download',
+        to: node?.attrs?.src,
+        download: true
+      }]
+    }
+
+    // Items for tables
+    if (nodeType === 'table') {
+      return [{
+        label: 'Clear all contents',
+        icon: 'i-lucide-square-x',
+        onSelect: () => {
+          if (pos === undefined) return
+          const tableNode = editor.state.doc.nodeAt(pos)
+          if (!tableNode) return
+
+          // Collect all cell ranges first
+          const cellRanges: { from: number, to: number }[] = []
+
+          tableNode.descendants((node, nodePos) => {
+            if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') {
+              const cellStart = pos + 1 + nodePos + 1 // Position inside the cell
+              const cellEnd = cellStart + node.content.size
+              if (node.content.size > 0) {
+                cellRanges.push({ from: cellStart, to: cellEnd })
+              }
+            }
+            return true
+          })
+
+          // Delete in reverse order so positions stay valid
+          const { tr } = editor.state
+          cellRanges.reverse().forEach(({ from, to }) => {
+            tr.delete(from, to)
+          })
+
+          editor.view.dispatch(tr)
+        }
+      }]
+    }
+
+    return []
+  }
+
+  const getItems = (editor: Editor): DropdownMenuItem[][] => {
+    if (!selectedNode.value?.node?.type) {
+      return []
+    }
+
+    const nodeType = selectedNode.value.node.type
+    const typeSpecificItems = getTypeSpecificItems(editor, nodeType)
+
+    return mapEditorItems(editor, [[
+      {
+        type: 'label',
+        label: upperFirst(nodeType)
+      },
+      ...typeSpecificItems
     ], [
       {
         kind: 'duplicate',

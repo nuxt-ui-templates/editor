@@ -233,9 +233,56 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
     }]]
   }
 
+  const getTableToolbarItems = (editor: Editor): EditorToolbarItem<T>[][] => {
+    return [[{
+      icon: 'i-lucide-between-vertical-start',
+      tooltip: { text: 'Add row above' },
+      onClick: () => {
+        editor.chain().focus().addRowBefore().run()
+      }
+    }, {
+      icon: 'i-lucide-between-vertical-end',
+      tooltip: { text: 'Add row below' },
+      onClick: () => {
+        editor.chain().focus().addRowAfter().run()
+      }
+    }, {
+      icon: 'i-lucide-between-horizontal-start',
+      tooltip: { text: 'Add column before' },
+      onClick: () => {
+        editor.chain().focus().addColumnBefore().run()
+      }
+    }, {
+      icon: 'i-lucide-between-horizontal-end',
+      tooltip: { text: 'Add column after' },
+      onClick: () => {
+        editor.chain().focus().addColumnAfter().run()
+      }
+    }], [{
+      icon: 'i-lucide-rows-3',
+      tooltip: { text: 'Delete row' },
+      onClick: () => {
+        editor.chain().focus().deleteRow().run()
+      }
+    }, {
+      icon: 'i-lucide-columns-3',
+      tooltip: { text: 'Delete column' },
+      onClick: () => {
+        editor.chain().focus().deleteColumn().run()
+      }
+    }], [{
+      icon: 'i-lucide-trash',
+      tooltip: { text: 'Delete table' },
+      onClick: () => {
+        editor.chain().focus().deleteTable().run()
+      }
+    }]]
+  }
+
   return {
     toolbarItems,
     bubbleToolbarItems,
-    getImageToolbarItems
+    getImageToolbarItems,
+    getTableToolbarItems
   }
 }

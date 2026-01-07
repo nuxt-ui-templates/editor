@@ -2,9 +2,10 @@
 import type { EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor } from '@tiptap/core'
 import { Emoji } from '@tiptap/extension-emoji'
-import TextAlign from '@tiptap/extension-text-align'
-import CodeBlockShiki from 'tiptap-extension-code-block-shiki'
-import ImageUpload from '~/components/editor/ImageUploadExtension'
+import { TableKit } from '@tiptap/extension-table'
+import { CellSelection } from 'prosemirror-tables'
+import { CodeBlockShiki } from 'tiptap-extension-code-block-shiki'
+import { ImageUpload } from '~/components/editor/ImageUploadExtension'
 
 const route = useRoute()
 const runtimeConfig = useRuntimeConfig()
@@ -20,7 +21,7 @@ const appConfig = useAppConfig()
 
 const editorRef = useTemplateRef('editorRef')
 
-const { extension: completionExtension, handlers: aiHandlers, isLoading: aiLoading } = useEditorCompletion(editorRef)
+const { extension: Completion, handlers: aiHandlers, isLoading: aiLoading } = useEditorCompletion(editorRef)
 
 const {
   enabled: collaborationEnabled,
@@ -49,6 +50,12 @@ const customHandlers = {
     isActive: (editor: Editor) => editor.isActive('imageUpload'),
     isDisabled: undefined
   },
+  table: {
+    canExecute: (editor: Editor) => editor.can().insertTable({ rows: 3, cols: 3, withHeaderRow: true }),
+    execute: (editor: Editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }),
+    isActive: (editor: Editor) => editor.isActive('table'),
+    isDisabled: undefined
+  },
   ...aiHandlers
 } satisfies EditorCustomHandlers
 
@@ -56,7 +63,7 @@ const { items: emojiItems } = useEditorEmojis()
 const { items: mentionItems } = useEditorMentions(connectedUsers)
 const { items: suggestionItems } = useEditorSuggestions(customHandlers)
 const { getItems: getDragHandleItems, onNodeChange } = useEditorDragHandle(customHandlers)
-const { toolbarItems, bubbleToolbarItems, getImageToolbarItems } = useEditorToolbar(customHandlers, { aiLoading })
+const { toolbarItems, bubbleToolbarItems, getImageToolbarItems, getTableToolbarItems } = useEditorToolbar(customHandlers, { aiLoading })
 
 // Default content - only used when Y.js document is empty
 const content = ref(`# Nuxt UI Editor Template
@@ -79,22 +86,30 @@ Type \`/\` anywhere to open the command menu and quickly insert:
 
 - Headings, paragraphs, and blockquotes
 - Bullet lists and numbered lists
-- Code blocks and horizontal rules
-- Images and more
+- Code blocks and tables
+- Images, horizontal rules, and more
 
 ## Mentions & Emojis
 
 Mention collaborators with \`@\` and add emojis with \`:\` syntax :rocket:
 
-> *Pro tip: Use the bubble toolbar that appears when you select text for quick formatting.*
+## AI Features
+
+This editor includes AI-powered writing assistance using the [AI SDK](https://ai-sdk.dev/):
+
+- **Autocompletion**: Suggestions appear as you type to continue your thoughts
+- **Selection actions**: Select text and use the bubble toolbar to fix, extend, simplify, or translate
+
+> *Pro tip: Press \`⌘J\` to manually trigger AI completion.*
 
 ## Code Blocks
 
-\`\`\`javascript
-const editor = new Editor({
-  extensions: [StarterKit, Collaboration],
-  content: 'Hello World!'
-})
+\`\`\`vue
+<template>
+  <UEditor v-slot="{ editor }" v-model="value" content-type="markdown">
+    <UEditorToolbar :editor="editor" :items="items" />
+  </UEditor>
+</template>
 \`\`\`
 
 ## Lists
@@ -111,6 +126,16 @@ Or use bullet points:
 - Second item
   - Nested items work too
   - With multiple levels
+
+## Tables
+
+Click on any cell to edit. Use the table handles to add or remove rows and columns.
+
+| Header 1 | Header 2 | Header 3 |
+| -------- | -------- | -------- |
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
+| Cell 7   | Cell 8   | Cell 9   |
 
 ## Drag & Drop
 
@@ -152,11 +177,6 @@ function onUpdate(value: string) {
 }
 
 const extensions = computed(() => [
-  Emoji,
-  ImageUpload,
-  TextAlign.configure({
-    types: ['heading', 'paragraph']
-  }),
   CodeBlockShiki.configure({
     defaultTheme: 'material-theme',
     themes: {
@@ -164,7 +184,10 @@ const extensions = computed(() => [
       dark: 'material-theme-palenight'
     }
   }),
-  completionExtension,
+  Completion,
+  Emoji,
+  ImageUpload,
+  TableKit,
   ...collaborationExtensions.value
 ])
 </script>
@@ -203,7 +226,7 @@ const extensions = computed(() => [
       :items="bubbleToolbarItems"
       layout="bubble"
       :should-show="({ editor, view, state }: any) => {
-        if (editor.isActive('imageUpload') || editor.isActive('image')) {
+        if (editor.isActive('imageUpload') || editor.isActive('image') || state.selection instanceof CellSelection) {
           return false
         }
         const { selection } = state
@@ -221,6 +244,15 @@ const extensions = computed(() => [
       layout="bubble"
       :should-show="({ editor, view }: any) => {
         return editor.isActive('image') && view.hasFocus()
+      }"
+    />
+
+    <UEditorToolbar
+      :editor="editor"
+      :items="getTableToolbarItems(editor)"
+      layout="bubble"
+      :should-show="({ editor, view }: any) => {
+        return editor.state.selection instanceof CellSelection && view.hasFocus()
       }"
     />
 

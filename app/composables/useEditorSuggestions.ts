@@ -62,6 +62,10 @@ export function useEditorSuggestions<T extends EditorCustomHandlers>(_customHand
     label: 'Image',
     icon: 'i-lucide-image'
   }, {
+    kind: 'table',
+    label: 'Table',
+    icon: 'i-lucide-table'
+  }, {
     kind: 'horizontalRule',
     label: 'Horizontal Rule',
     icon: 'i-lucide-separator-horizontal'
