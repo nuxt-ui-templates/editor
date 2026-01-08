@@ -7,17 +7,16 @@
 
 :root {
   --ui-bg: white;
-  --ui-radius: 0.5rem;
+}
+
+.dark {
+  --ui-bg: black;
 }
 
 html.dark .tiptap .shiki,
 html.dark .tiptap .shiki span {
   color: var(--shiki-dark) !important;
   background-color: var(--ui-bg-muted) !important;
-}
-
-.dark {
-  --ui-bg: black;
 }
 
 /* Collaboration carets */

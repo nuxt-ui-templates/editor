@@ -3,7 +3,7 @@ import type { DropdownMenuItem, EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor, JSONContent } from '@tiptap/vue-3'
 import { mapEditorItems } from '@nuxt/ui/utils/editor'
 
-const CONVERTIBLE_TYPES = ['paragraph', 'heading', 'bulletList', 'orderedList', 'blockquote', 'codeBlock', 'listItem', 'taskItem']
+const CONVERTIBLE_TYPES = ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock', 'listItem', 'taskItem']
 
 export function useEditorDragHandle<T extends EditorCustomHandlers>(customHandlers?: T) {
   const selectedNode = ref<{ node: JSONContent | null, pos: number }>()
@@ -24,6 +24,7 @@ export function useEditorDragHandle<T extends EditorCustomHandlers>(customHandle
           { kind: 'heading', level: 4, label: 'Heading 4', icon: 'i-lucide-heading-4' },
           { kind: 'bulletList', label: 'Bullet List', icon: 'i-lucide-list' },
           { kind: 'orderedList', label: 'Ordered List', icon: 'i-lucide-list-ordered' },
+          { kind: 'taskList', label: 'Task List', icon: 'i-lucide-list-check' },
           { kind: 'blockquote', label: 'Blockquote', icon: 'i-lucide-text-quote' },
           { kind: 'codeBlock', label: 'Code Block', icon: 'i-lucide-square-code' }
         ]

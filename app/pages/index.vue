@@ -2,6 +2,7 @@
 import type { EditorCustomHandlers } from '@nuxt/ui'
 import type { Editor } from '@tiptap/core'
 import { Emoji } from '@tiptap/extension-emoji'
+import { TaskList, TaskItem } from '@tiptap/extension-list'
 import { TableKit } from '@tiptap/extension-table'
 import { CellSelection } from 'prosemirror-tables'
 import { CodeBlockShiki } from 'tiptap-extension-code-block-shiki'
@@ -194,6 +195,8 @@ const extensions = computed(() => [
   Emoji,
   ImageUpload,
   TableKit,
+  TaskList,
+  TaskItem,
   ...collaborationExtensions.value
 ])
 </script>

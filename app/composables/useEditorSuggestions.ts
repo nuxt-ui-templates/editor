@@ -39,6 +39,10 @@ export function useEditorSuggestions<T extends EditorCustomHandlers>(_customHand
     label: 'Numbered List',
     icon: 'i-lucide-list-ordered'
   }, {
+    kind: 'taskList',
+    label: 'Task List',
+    icon: 'i-lucide-list-check'
+  }, {
     kind: 'blockquote',
     label: 'Blockquote',
     icon: 'i-lucide-text-quote'

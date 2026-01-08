@@ -34,31 +34,31 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
     },
     items: [{
       kind: 'aiFix',
-      icon: 'i-lucide-spell-check',
-      label: 'Fix spelling & grammar'
+      label: 'Fix spelling & grammar',
+      icon: 'i-lucide-spell-check'
     }, {
       kind: 'aiExtend',
-      icon: 'i-lucide-unfold-vertical',
-      label: 'Extend text'
+      label: 'Extend text',
+      icon: 'i-lucide-unfold-vertical'
     }, {
       kind: 'aiReduce',
-      icon: 'i-lucide-fold-vertical',
-      label: 'Reduce text'
+      label: 'Reduce text',
+      icon: 'i-lucide-fold-vertical'
     }, {
       kind: 'aiSimplify',
-      icon: 'i-lucide-lightbulb',
-      label: 'Simplify text'
+      label: 'Simplify text',
+      icon: 'i-lucide-lightbulb'
     }, {
       kind: 'aiContinue',
-      icon: 'i-lucide-text',
-      label: 'Continue sentence'
+      label: 'Continue sentence',
+      icon: 'i-lucide-text'
     }, {
       kind: 'aiSummarize',
-      icon: 'i-lucide-list',
-      label: 'Summarize'
+      label: 'Summarize',
+      icon: 'i-lucide-list'
     }, {
-      icon: 'i-lucide-languages',
       label: 'Translate',
+      icon: 'i-lucide-languages',
       children: [{
         kind: 'aiTranslate',
         language: 'English',
@@ -99,39 +99,43 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
     }, {
       kind: 'heading',
       level: 1,
-      icon: 'i-lucide-heading-1',
-      label: 'Heading 1'
+      label: 'Heading 1',
+      icon: 'i-lucide-heading-1'
     }, {
       kind: 'heading',
       level: 2,
-      icon: 'i-lucide-heading-2',
-      label: 'Heading 2'
+      label: 'Heading 2',
+      icon: 'i-lucide-heading-2'
     }, {
       kind: 'heading',
       level: 3,
-      icon: 'i-lucide-heading-3',
-      label: 'Heading 3'
+      label: 'Heading 3',
+      icon: 'i-lucide-heading-3'
     }, {
       kind: 'heading',
       level: 4,
-      icon: 'i-lucide-heading-4',
-      label: 'Heading 4'
+      label: 'Heading 4',
+      icon: 'i-lucide-heading-4'
     }, {
       kind: 'bulletList',
-      icon: 'i-lucide-list',
-      label: 'Bullet List'
+      label: 'Bullet List',
+      icon: 'i-lucide-list'
     }, {
       kind: 'orderedList',
-      icon: 'i-lucide-list-ordered',
-      label: 'Ordered List'
+      label: 'Ordered List',
+      icon: 'i-lucide-list-ordered'
+    }, {
+      kind: 'taskList',
+      label: 'Task List',
+      icon: 'i-lucide-list-check'
     }, {
       kind: 'blockquote',
-      icon: 'i-lucide-text-quote',
-      label: 'Blockquote'
+      label: 'Blockquote',
+      icon: 'i-lucide-text-quote'
     }, {
       kind: 'codeBlock',
-      icon: 'i-lucide-square-code',
-      label: 'Code Block'
+      label: 'Code Block',
+      icon: 'i-lucide-square-code'
     }]
   }], [{
     kind: 'mark',
