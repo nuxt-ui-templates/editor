@@ -2,7 +2,7 @@
 
 [![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
 
-Notion-like WYSIWYG editor with AI-powered autocompletion in Vue & Nuxt. Built with [Nuxt UI](https://ui.nuxt.com) and [TipTap](https://tiptap.dev), showcasing the powerful `UEditor` component with advanced editing capabilities.
+Notion-like WYSIWYG editor with AI-powered completions and real-time collaboration in Vue & Nuxt. Built with [Nuxt UI](https://ui.nuxt.com) and [TipTap](https://tiptap.dev), showcasing the powerful `UEditor` component with advanced editing capabilities.
 
 - [Live demo](https://editor-template.nuxt.dev/)
 - [Documentation](https://ui.nuxt.com/docs/components/editor)
