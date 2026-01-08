@@ -165,33 +165,6 @@ export function useEditorToolbar<T extends EditorCustomHandlers>(_customHandlers
     kind: 'imageUpload',
     icon: 'i-lucide-image',
     tooltip: { text: 'Image' }
-  }], [{
-    icon: 'i-lucide-align-justify',
-    tooltip: { text: 'Text Align' },
-    content: {
-      align: 'end'
-    },
-    items: [{
-      kind: 'textAlign',
-      align: 'left',
-      icon: 'i-lucide-align-left',
-      label: 'Align Left'
-    }, {
-      kind: 'textAlign',
-      align: 'center',
-      icon: 'i-lucide-align-center',
-      label: 'Align Center'
-    }, {
-      kind: 'textAlign',
-      align: 'right',
-      icon: 'i-lucide-align-right',
-      label: 'Align Right'
-    }, {
-      kind: 'textAlign',
-      align: 'justify',
-      icon: 'i-lucide-align-justify',
-      label: 'Align Justify'
-    }]
   }]] satisfies EditorToolbarItem<T>[][])
 
   const getImageToolbarItems = (editor: Editor): EditorToolbarItem<T>[][] => {
