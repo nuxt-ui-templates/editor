@@ -12,7 +12,7 @@ useHead({
 })
 
 const title = 'Nuxt UI Editor Template'
-const description = 'A Notion-like WYSIWYG editor with AI-powered autocompletion in Vue & Nuxt.'
+const description = 'A Notion-like WYSIWYG editor with AI-powered completions and real-time collaboration in Vue & Nuxt.'
 
 useSeoMeta({
   title,
