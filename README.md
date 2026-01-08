@@ -49,7 +49,7 @@ pnpm install
 
 ### AI Integration (Optional)
 
-This template includes AI-powered writing assistance using the [Vercel AI SDK](https://ai-sdk.dev/) and its [`useCompletion`](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-completion) composable for streaming text generation.
+This template includes AI-powered writing assistance using the [Vercel AI SDK](https://ai-sdk.dev/) and its [`useCompletion`](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-completion) composable for streaming text generation with support for multiple providers through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway).
 
 **AI Features:**
 
@@ -68,7 +68,7 @@ Set your AI provider configuration in `.env`:
 AI_GATEWAY_API_KEY=<your-vercel-ai-gateway-api-key>
 ```
 
-> [!TIP] to="https://vercel.com/docs/ai-gateway"
+> [!TIP]
 > With Vercel AI Gateway, you don't need individual API keys for OpenAI, Anthropic, etc. The AI Gateway provides a unified API to access hundreds of models through a single endpoint with automatic load balancing, fallbacks, and spend monitoring.
 
 ### Blob Storage (Optional)
