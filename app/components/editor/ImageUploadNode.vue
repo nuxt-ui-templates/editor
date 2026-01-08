@@ -4,28 +4,30 @@ import { NodeViewWrapper } from '@tiptap/vue-3'
 
 const props = defineProps<NodeViewProps>()
 
-const file = ref<File | null>(null)
+const fileUploadRef = useTemplateRef('fileUploadRef')
+
+const error = ref<string | null>(null)
 const loading = ref(false)
 
-watch(file, async (newFile) => {
-  if (!newFile) return
+const upload = useUpload('/api/upload', {
+  formKey: 'file',
+  multiple: false
+})
+
+async function onFileChange() {
+  const target = fileUploadRef.value?.inputRef
+  if (!target) {
+    return
+  }
 
   loading.value = true
+  error.value = null
 
-  const reader = new FileReader()
-  reader.onload = async (e) => {
-    const dataUrl = e.target?.result as string
-    if (!dataUrl) {
-      loading.value = false
-      return
-    }
-
-    // Simulate upload delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
+  try {
+    const result = await upload(target)
 
     const pos = props.getPos()
     if (typeof pos !== 'number') {
-      loading.value = false
       return
     }
 
@@ -33,30 +35,33 @@ watch(file, async (newFile) => {
       .chain()
       .focus()
       .deleteRange({ from: pos, to: pos + 1 })
-      .setImage({ src: dataUrl })
+      .setImage({ src: result.url || `/images/${result.pathname}` })
       .run()
-
+  } catch (e) {
+    error.value = (e as Error & { data: { message: string } }).data.message || 'An unknown error occurred'
+  } finally {
     loading.value = false
   }
-  reader.readAsDataURL(newFile)
-})
+}
 </script>
 
 <template>
   <NodeViewWrapper>
     <UFileUpload
-      v-model="file"
+      ref="fileUploadRef"
       accept="image/*"
       label="Upload an image"
-      description="SVG, PNG, JPG or GIF (max. 2MB)"
+      :description="error || 'SVG, PNG, JPG or GIF (max. 2MB)'"
       :preview="false"
       class="min-h-48"
+      :ui="{ description: error ? 'text-error' : '' }"
+      @update:model-value="onFileChange"
     >
       <template #leading>
         <UAvatar
-          :icon="loading ? 'i-lucide-loader-circle' : 'i-lucide-image'"
+          :icon="error ? 'i-lucide-alert-circle' : loading ? 'i-lucide-loader-circle' : 'i-lucide-image'"
           size="xl"
-          :ui="{ icon: [loading && 'animate-spin'] }"
+          :ui="{ icon: [loading && 'animate-spin', error && 'text-error'] }"
         />
       </template>
     </UFileUpload>

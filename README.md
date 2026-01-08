@@ -18,13 +18,13 @@ Notion-like WYSIWYG editor with AI-powered autocompletion in Vue & Nuxt. Built w
 ## Features
 
 - **Rich Text Editing** - Full formatting support with headings, lists, blockquotes, and code blocks
+- **Tables** - Insert and edit tables with row/column controls and cell selection
 - **Bubble & Fixed Toolbars** - Contextual toolbars that adapt to your selection
 - **Drag Handle** - Easily reorder, duplicate, or delete content blocks
 - **Slash Commands** - Type `/` to access quick insertion commands
-- **Image Upload** - Custom image upload node with replace and delete actions
+- **Image Upload** - Custom image upload node powered by [NuxtHub](https://hub.nuxt.com/docs/blob) with [Vercel Blob](https://vercel.com/docs/vercel-blob)
 - **Mentions** - `@mention` support with user suggestions
 - **Emoji Picker** - Full GitHub emoji set with `:emoji:` syntax
-- **Text Alignment** - Left, center, right, and justify alignment options
 - **Markdown Support** - Content type set to markdown for easy serialization
 - **AI-powered Features** - Inline completions and text transformations powered by [Vercel AI SDK](https://ai-sdk.dev/)
 - **Real-time Collaboration** - Optional collaborative editing powered by [PartyKit](https://partykit.io)
@@ -37,7 +37,7 @@ npm create nuxt@latest -- -t github:nuxt-ui-templates/editor
 
 ## Deploy your own
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=editor&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Feditor&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Feditor-dark.png&demo-url=https%3A%2F%2Feditor-template.nuxt.dev%2F&demo-title=Nuxt%20Editor%20Template&demo-description=A%20rich%20text%20editor%20template%20built%20with%20Nuxt%20UI%20and%20TipTap.&env=NUXT_PUBLIC_PARTYKIT_HOST&envDescription=PartyKit%20host%20URL%20for%20real-time%20collaboration%20(optional)&envLink=https%3A%2F%2Fdocs.partykit.io%2Fquickstart%2F)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=editor&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Feditor&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Feditor-dark.png&demo-url=https%3A%2F%2Feditor-template.nuxt.dev%2F&demo-title=Nuxt%20Editor%20Template&demo-description=Notion-like%20WYSIWYG%20editor%20with%20AI-powered%20completions%20and%20real-time%20collaboration%20in%20Vue%20%26%20Nuxt.&env=NUXT_PUBLIC_PARTYKIT_HOST&envDescription=PartyKit%20host%20URL%20for%20real-time%20collaboration%20(optional)&envLink=https%3A%2F%2Fdocs.partykit.io%2Fquickstart%2F)
 
 ## Setup
 
@@ -53,7 +53,7 @@ This template includes AI-powered writing assistance using the [Vercel AI SDK](h
 
 **AI Features:**
 
-- **Inline Completions** - Get AI suggestions as you type, accept with `Tab`
+- **Inline Completions** - Trigger AI suggestions with `⌘J`, accept with `Tab`
 - **Continue Writing** - Extend your content from the cursor position
 - **Fix Spelling & Grammar** - Automatically correct selected text
 - **Extend/Reduce Text** - Make selected content longer or shorter
@@ -70,6 +70,32 @@ AI_GATEWAY_API_KEY=<your-vercel-ai-gateway-api-key>
 
 > [!TIP] to="https://vercel.com/docs/ai-gateway"
 > With Vercel AI Gateway, you don't need individual API keys for OpenAI, Anthropic, etc. The AI Gateway provides a unified API to access hundreds of models through a single endpoint with automatic load balancing, fallbacks, and spend monitoring.
+
+### Blob Storage (Optional)
+
+This template uses [NuxtHub Blob](https://hub.nuxt.com/docs/blob) for image uploads, which supports multiple storage providers:
+
+- **Local filesystem** (default for development)
+- **Vercel Blob** (auto-configured when deployed to Vercel)
+- **Cloudflare R2** (auto-configured when deployed to Cloudflare)
+- **Amazon S3** (with manual configuration)
+
+For **[Vercel Blob](https://vercel.com/docs/vercel-blob)** (used by default via `@vercel/blob`), assign a Blob Store to your project from the Vercel dashboard (Project → Storage), then set the token for local development:
+
+```bash
+BLOB_READ_WRITE_TOKEN=<your-vercel-blob-token>
+```
+
+For **S3-compatible storage**, set:
+
+```bash
+S3_ACCESS_KEY_ID=<your-access-key-id>
+S3_SECRET_ACCESS_KEY=<your-secret-access-key>
+S3_BUCKET=<your-bucket-name>
+S3_REGION=<your-region>
+```
+
+> Without configuration, files are stored locally in `.data/blob` during development.
 
 ### Collaboration (Optional)
 

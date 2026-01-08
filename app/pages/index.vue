@@ -68,41 +68,21 @@ const { toolbarItems, bubbleToolbarItems, getImageToolbarItems, getTableToolbarI
 // Default content - only used when Y.js document is empty
 const content = ref(`# Nuxt UI Editor Template
 
-A Notion-like WYSIWYG editor with AI-powered autocompletion in Vue & Nuxt.
+A Notion-like WYSIWYG editor with AI-powered completions and real-time collaboration in [Vue](https://vuejs.org/) & [Nuxt](https://nuxt.com/).
 
-This editor supports **real-time collaboration**. Add \`?room=your-room-name\` to the URL and share the link to collaborate with others.
+> Add [\`?room=my-room\`](/?room=my-room) to the URL and share the link to collaborate with others.
 
 ---
 
-## Rich Text Formatting
+## Rich Text Editing
 
-This editor supports **bold**, *italic*, <u>underline</u>, ~~strikethrough~~, and \`inline code\`.
+Full formatting support with **bold**, *italic*, <u>underline</u>, ~~strikethrough~~, and \`inline code\`.
 
 ![Image Placeholder](/placeholder.jpeg)
 
-## Slash Commands
+### Code Blocks
 
-Type \`/\` anywhere to open the command menu and quickly insert:
-
-- Headings, paragraphs, and blockquotes
-- Bullet lists and numbered lists
-- Code blocks and tables
-- Images, horizontal rules, and more
-
-## Mentions & Emojis
-
-Mention collaborators with \`@\` and add emojis with \`:\` syntax :rocket:
-
-## AI Features
-
-This editor includes AI-powered writing assistance using the [AI SDK](https://ai-sdk.dev/):
-
-- **Autocompletion**: Suggestions appear as you type to continue your thoughts
-- **Selection actions**: Select text and use the bubble toolbar to fix, extend, simplify, or translate
-
-> *Pro tip: Press \`⌘J\` to manually trigger AI completion.*
-
-## Code Blocks
+Code blocks are supported with syntax highlighting using [Shiki](https://shiki.dev/).
 
 \`\`\`vue
 <template>
@@ -112,39 +92,65 @@ This editor includes AI-powered writing assistance using the [AI SDK](https://ai
 </template>
 \`\`\`
 
-## Lists
-
-Organize your content with lists:
+### Lists
 
 1. Numbered lists for sequential items
 2. With automatic numbering
-3. And proper indentation
 
-Or use bullet points:
+- Bullet lists work too
+  - With nested items
+  - At multiple levels
 
-- First item
-- Second item
-  - Nested items work too
-  - With multiple levels
+- [ ] Task lists for todos
+- [x] Mark items as complete
 
-## Tables
+### Tables
 
-Click on any cell to edit. Use the table handles to add or remove rows and columns.
+Insert and edit tables with row/column controls and cell selection.
 
-| Header 1 | Header 2 | Header 3 |
-| -------- | -------- | -------- |
-| Cell 1   | Cell 2   | Cell 3   |
-| Cell 4   | Cell 5   | Cell 6   |
-| Cell 7   | Cell 8   | Cell 9   |
+| Feature | Description | Status |
+| ------- | ----------- | ------ |
+| Tables | Full table support | ✅ |
+| Markdown | Content serialization | ✅ |
 
-## Drag & Drop
+---
 
-Use the drag handle on the left side of any block to:
+## Features
 
-- Reorder content by dragging
-- Duplicate blocks
-- Delete blocks
-- Convert between block types
+### Bubble & Fixed Toolbars
+
+Select text to see the bubble toolbar with formatting options. The fixed toolbar at the top provides quick access to common actions.
+
+### Drag Handle
+
+Use the drag handle on the left side of any block to reorder, duplicate, delete, or convert between block types.
+
+### Slash Commands
+
+Type \`/\` anywhere to access quick insertion commands for headings, lists, code blocks, tables, images, and more.
+
+### Image Upload
+
+Custom image upload node powered by [\`UFileUpload\`](https://ui.nuxt.com/docs/components/file-upload) component and [NuxtHub](https://hub.nuxt.com/docs/blob) with [Vercel Blob](https://vercel.com/docs/vercel-blob) support.
+
+<div data-type="image-upload"></div>
+
+### Mentions & Emojis
+
+Mention collaborators with \`@\` and add emojis with \`:\` syntax :rocket:
+
+### AI-powered Features
+
+Inline completions and text transformations powered by [AI SDK](https://ai-sdk.dev/).
+
+- **Autocompletion**: Suggestions appear as you type
+- **Selection actions**: Fix, extend, simplify, or translate selected text
+
+> *Pro tip: Press \`⌘J\` to manually trigger AI completion.*
+
+### Real-time Collaboration
+
+Collaborative editing powered by [PartyKit](https://partykit.io/). Add \`?room=my-room\` to the URL and share the link to collaborate with others in real-time. See collaborators' cursors and selections as they type.
 
 ---
 

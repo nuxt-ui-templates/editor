@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@nuxthub/core'
   ],
 
   devtools: {
@@ -24,6 +25,10 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2025-01-15',
+
+  hub: {
+    blob: true
+  },
 
   vite: {
     optimizeDeps: {
