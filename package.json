@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.17",
+    "nuxt-csurf": "^1.6.5",
     "@ai-sdk/vue": "^3.0.43",
     "@iconify-json/lucide": "^1.2.86",
     "@iconify-json/simple-icons": "^1.2.67",

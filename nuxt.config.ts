@@ -3,7 +3,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxthub/core'
+    '@nuxthub/core',
+    'nuxt-csurf'
   ],
 
   devtools: {

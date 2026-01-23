@@ -9,9 +9,11 @@ const fileUploadRef = useTemplateRef('fileUploadRef')
 const error = ref<string | null>(null)
 const loading = ref(false)
 
+const { csrf, headerName } = useCsrf()
 const upload = useUpload('/api/upload', {
   formKey: 'file',
-  multiple: false
+  multiple: false,
+  headers: { [headerName]: csrf }
 })
 
 async function onFileChange() {
