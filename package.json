@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.39",
-    "nuxt-csurf": "^1.6.5",
     "@ai-sdk/vue": "^3.0.77",
+    "@aws-sdk/client-s3": "^3.649.0",
     "@iconify-json/lucide": "^1.2.89",
     "@iconify-json/simple-icons": "^1.2.70",
     "@nuxt/ui": "^4.4.0",
@@ -29,18 +29,24 @@
     "@vercel/blob": "^2.2.0",
     "@vueuse/core": "^14.2.0",
     "ai": "^6.0.77",
+    "bcryptjs": "^2.4.3",
+    "drizzle-orm": "^0.33.0",
+    "jsonwebtoken": "^9.1.2",
     "nuxt": "^4.3.1",
     "scule": "^1.3.0",
     "shiki": "^3.22.0",
     "tailwindcss": "^4.1.18",
     "tiptap-extension-code-block-shiki": "^1.0.0",
     "y-partykit": "^0.0.33",
-    "yjs": "^13.6.29"
+    "yjs": "^13.6.29",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.14.0",
+    "drizzle-kit": "^0.24.6",
     "eslint": "^10.0.0",
     "typescript": "^5.9.3",
+    "wrangler": "^3.96.0",
     "vue-tsc": "^3.2.4"
   },
   "packageManager": "pnpm@10.29.2"

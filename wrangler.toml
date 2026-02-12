@@ -1,0 +1,40 @@
+name = "blog-system"
+main = "dist/server/index.mjs"
+site = { directory = "dist/public" }
+build = { command = "npm run build" }
+
+# Cloudflare D1 Database Binding
+[[d1_databases]]
+binding = "DB"
+database_name = "blog-db"
+database_id = "YOUR_D1_DATABASE_ID"  # Replace with actual D1 database ID
+
+# Cloudflare R2 Binding for Image Storage
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "blog-images"
+jurisdiction = "eu"  # Change to appropriate jurisdiction
+
+# Environment variables
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+# KV Namespace for caching (optional)
+[[kv_namespaces]]
+binding = "KV_CACHE"
+id = "YOUR_KV_NAMESPACE_ID"  # Optional for caching
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "."
+root = "."
+
+# Compatibility flags
+compatibility_flags = ["streams_enable_constructors"]
+
+# Limits
+limits = { cpu_ms = 50000 }
