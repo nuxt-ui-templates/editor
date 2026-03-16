@@ -14,8 +14,8 @@
     "@ai-sdk/gateway": "^3.0.66",
     "nuxt-csurf": "^1.6.5",
     "@ai-sdk/vue": "^3.0.116",
-    "@iconify-json/lucide": "^1.2.96",
-    "@iconify-json/simple-icons": "^1.2.72",
+    "@iconify-json/lucide": "^1.2.98",
+    "@iconify-json/simple-icons": "^1.2.74",
     "@nuxt/ui": "^4.5.1",
     "@nuxthub/core": "^0.10.7",
     "@tiptap/core": "^3.20.1",
@@ -35,7 +35,7 @@
     "tailwindcss": "^4.2.1",
     "tiptap-extension-code-block-shiki": "^1.0.0",
     "y-partykit": "^0.0.33",
-    "yjs": "^13.6.29"
+    "yjs": "^13.6.30"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
@@ -43,5 +43,5 @@
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.5"
   },
-  "packageManager": "pnpm@10.30.3"
+  "packageManager": "pnpm@10.32.1"
 }
