@@ -11,11 +11,11 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^3.0.109",
+    "@ai-sdk/gateway": "^3.0.112",
     "nuxt-csurf": "^1.6.5",
-    "@ai-sdk/vue": "^3.0.174",
-    "@iconify-json/lucide": "^1.2.105",
-    "@iconify-json/simple-icons": "^1.2.80",
+    "@ai-sdk/vue": "^3.0.177",
+    "@iconify-json/lucide": "^1.2.106",
+    "@iconify-json/simple-icons": "^1.2.81",
     "@nuxt/ui": "^4.7.1",
     "@nuxthub/core": "^0.10.7",
     "@tiptap/core": "^3.22.4",
@@ -28,12 +28,12 @@
     "@tiptap/vue-3": "^3.22.4",
     "@vercel/blob": "^2.3.3",
     "@vueuse/core": "^14.3.0",
-    "ai": "^6.0.174",
+    "ai": "^6.0.177",
     "nuxt": "^4.4.5",
     "scule": "^1.3.0",
     "shiki": "^4.0.2",
-    "tailwindcss": "^4.2.4",
-    "tiptap-extension-code-block-shiki": "^1.1.0",
+    "tailwindcss": "^4.3.0",
+    "tiptap-extension-code-block-shiki": "^1.2.0",
     "y-partykit": "^0.0.33",
     "yjs": "^13.6.30"
   },
@@ -43,5 +43,5 @@
     "typescript": "^6.0.3",
     "vue-tsc": "^3.2.8"
   },
-  "packageManager": "pnpm@10.33.2"
+  "packageManager": "pnpm@10.33.4"
 }
