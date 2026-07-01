@@ -13,7 +13,7 @@
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.139",
     "nuxt-csurf": "^1.6.5",
-    "@ai-sdk/vue": "^3.0.214",
+    "@ai-sdk/vue": "^4.0.9",
     "@iconify-json/lucide": "^1.2.114",
     "@iconify-json/simple-icons": "^1.2.87",
     "@nuxt/ui": "^4.9.0",
