@@ -11,7 +11,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^3.0.139",
+    "@ai-sdk/gateway": "^4.0.7",
     "nuxt-csurf": "^1.6.5",
     "@ai-sdk/vue": "^3.0.214",
     "@iconify-json/lucide": "^1.2.114",
