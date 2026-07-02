@@ -11,9 +11,9 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^3.0.139",
+    "@ai-sdk/gateway": "^4.0.7",
     "nuxt-csurf": "^1.6.5",
-    "@ai-sdk/vue": "^3.0.214",
+    "@ai-sdk/vue": "^4.0.9",
     "@iconify-json/lucide": "^1.2.114",
     "@iconify-json/simple-icons": "^1.2.87",
     "@nuxt/ui": "^4.9.0",
@@ -28,7 +28,7 @@
     "@tiptap/vue-3": "^3.27.1",
     "@vercel/blob": "^2.5.0",
     "@vueuse/core": "^14.3.0",
-    "ai": "^6.0.214",
+    "ai": "^7.0.9",
     "nuxt": "^4.4.8",
     "scule": "^1.3.0",
     "shiki": "^4.3.0",
