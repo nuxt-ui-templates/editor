@@ -32,6 +32,9 @@
       color: 'primary',
       checked: true,
       type: 'checkbox'
+    }, {
+      label: 'Calendar',
+      to: 'https://calendar-template.nuxt.dev/'
     }]"
     :content="{ align: 'start' }"
     :ui="{ content: 'min-w-fit' }"
