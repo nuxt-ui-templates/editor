@@ -7,7 +7,10 @@
     }"
   >
     <template #left>
-      <NuxtLink to="/">
+      <NuxtLink
+        to="/"
+        class="focus-visible:outline-3 outline-primary/25 rounded-md p-1 -ms-1"
+      >
         <AppLogo class="w-auto h-6 shrink-0" />
       </NuxtLink>
 
