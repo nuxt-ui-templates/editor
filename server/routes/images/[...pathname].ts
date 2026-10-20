@@ -1,6 +1,8 @@
-export default eventHandler(async (event) => {
-  const { pathname } = getRouterParams(event)
+import { defineEventHandler, getRouterParam } from 'nuxt/server'
 
-  setHeader(event, 'Content-Security-Policy', 'default-src \'none\';')
-  return blob.serve(event, pathname as string)
+export default defineEventHandler(async (event) => {
+  const pathname = getRouterParam(event, 'pathname')!
+
+  event.res.headers.set('Content-Security-Policy', 'default-src \'none\';')
+  return blob.serve(event, pathname)
 })
