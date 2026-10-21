@@ -1,6 +1,7 @@
+import { defineEventHandler } from 'nuxt/server'
 import { blob } from 'hub:blob'
 
-export default eventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
   return blob.handleUpload(event, {
     formKey: 'file',
     multiple: false,
