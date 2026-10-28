@@ -1,4 +1,5 @@
 import { Extension } from '@tiptap/core'
+import { isChangeOrigin } from '@tiptap/extension-collaboration'
 import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import type { Editor } from '@tiptap/vue-3'
@@ -16,14 +17,15 @@ export interface CompletionOptions {
    */
   debounce?: number
   /**
-   * Characters that should prevent completion from triggering
+   * Characters that prevent completion while typing the word they start (slash commands, emojis, mentions)
    * @defaultValue ['/', ':', '@']
    */
   triggerCharacters?: string[]
   /**
-   * Called when completion should be triggered, receives the editor instance
+   * Called when completion should be triggered, receives the editor instance.
+   * Return `false` to skip showing a suggestion.
    */
-  onTrigger?: (editor: Editor) => void
+  onTrigger?: (editor: Editor) => boolean | undefined
   /**
    * Called when suggestion is accepted
    */
@@ -44,6 +46,13 @@ export interface CompletionStorage {
 }
 
 export const completionPluginKey = new PluginKey('completion')
+
+function dismiss(editor: Editor, storage: CompletionStorage, options: CompletionOptions) {
+  storage.clearSuggestion()
+  // Force decoration update
+  editor.view.dispatch(editor.state.tr.setMeta('completionUpdate', true))
+  options.onDismiss?.()
+}
 
 export const Completion = Extension.create<CompletionOptions, CompletionStorage>({
   name: 'completion',
@@ -82,6 +91,16 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
     return [
       new Plugin({
         key: completionPluginKey,
+        state: {
+          init: () => null,
+          apply(tr) {
+            // Keep the suggestion in place when a collaborator edits the document
+            if (tr.docChanged && storage.position !== undefined) {
+              storage.position = tr.mapping.map(storage.position)
+            }
+            return null
+          }
+        },
         props: {
           decorations(state) {
             if (!storage.visible || !storage.suggestion || storage.position === undefined) {
@@ -127,39 +146,36 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         return true
       },
       Escape: ({ editor }) => {
-        if (this.storage.visible) {
-          this.storage.clearSuggestion()
-          // Force decoration update
-          editor.view.dispatch(editor.state.tr.setMeta('completionUpdate', true))
-          this.options.onDismiss?.()
-          return true
+        if (!this.storage.visible) {
+          return false
         }
-        return false
+
+        dismiss(editor as Editor, this.storage, this.options)
+        return true
       }
     }
   },
 
-  onUpdate({ editor }) {
+  onUpdate({ editor, transaction }) {
+    // Ignore edits from collaborators
+    if (isChangeOrigin(transaction)) return
+
     // Clear suggestion on any edit
     if (this.storage.visible) {
-      this.storage.clearSuggestion()
-      // Force decoration update
-      editor.view.dispatch(editor.state.tr.setMeta('completionUpdate', true))
-      this.options.onDismiss?.()
+      dismiss(editor as Editor, this.storage, this.options)
     }
 
-    // Debounced trigger check (only if autoTrigger is enabled)
     if (this.options.autoTrigger) {
       this.storage.debouncedTrigger?.(editor as Editor)
     }
   },
 
-  onSelectionUpdate({ editor }) {
+  onSelectionUpdate({ editor, transaction }) {
+    // Collaborator edits move the selection too
+    if (isChangeOrigin(transaction)) return
+
     if (this.storage.visible) {
-      this.storage.clearSuggestion()
-      // Force decoration update
-      editor.view.dispatch(editor.state.tr.setMeta('completionUpdate', true))
-      this.options.onDismiss?.()
+      dismiss(editor as Editor, this.storage, this.options)
     }
   },
 
@@ -183,20 +199,22 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
       // Don't trigger if sentence is complete (ends with punctuation)
       const endsWithPunctuation = /[.!?]\s*$/.test(textContent)
 
-      // Don't trigger if text ends with trigger characters
-      const triggerChars = options.triggerCharacters || []
-      const endsWithTrigger = triggerChars.some(char => textContent.endsWith(char))
+      // Don't trigger while typing a word that starts with a trigger character
+      const lastWord = textContent.split(/\s/).pop() || ''
+      const endsWithTrigger = (options.triggerCharacters || []).some(char => lastWord.startsWith(char))
 
       if (!isAtEndOfBlock || !hasContent || endsWithPunctuation || endsWithTrigger) {
+        return
+      }
+
+      // Pass editor to let the handler extract content (e.g., as markdown)
+      if (options.onTrigger(editor) === false) {
         return
       }
 
       // Set position and mark as visible
       storage.position = selection.from
       storage.visible = true
-
-      // Pass editor to let the handler extract content (e.g., as markdown)
-      options.onTrigger(editor)
     }, options.debounce || 250)
   },
 
