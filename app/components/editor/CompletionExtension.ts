@@ -87,6 +87,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
 
   addProseMirrorPlugins() {
     const storage = this.storage
+    const options = this.options
 
     return [
       new Plugin({
@@ -102,6 +103,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
                 storage.position = $from.pos
               } else {
                 storage.clearSuggestion()
+                options.onDismiss?.()
               }
             }
             return null
