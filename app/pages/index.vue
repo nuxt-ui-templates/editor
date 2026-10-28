@@ -10,7 +10,7 @@ import { ImageUpload } from '~/components/editor/ImageUploadExtension'
 const route = useRoute()
 const runtimeConfig = useRuntimeConfig()
 
-const room = computed(() => route.query.room as string | undefined)
+const room = computed(() => typeof route.query.room === 'string' ? route.query.room : undefined)
 
 const user = useState('user', () => ({
   name: getRandomName(),
