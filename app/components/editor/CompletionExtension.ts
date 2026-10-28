@@ -93,11 +93,16 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         key: completionPluginKey,
         state: {
           init: () => null,
-          apply(tr, _value, _oldState, newState) {
-            // The suggestion sits at the cursor and local edits dismiss it, so follow the cursor when a collaborator
-            // edits the document. Yjs replaces the whole document on remote changes, so the position can't be mapped.
-            if (tr.docChanged && storage.position !== undefined) {
-              storage.position = newState.selection.from
+          apply(tr, _value, oldState, newState) {
+            // Yjs replaces the whole document on remote changes, so the position can't be mapped. The suggestion
+            // sits at the cursor, so follow it, and drop the suggestion if a collaborator changed its paragraph.
+            if (isChangeOrigin(tr) && storage.position !== undefined) {
+              const { $from } = newState.selection
+              if ($from.parent.eq(oldState.doc.resolve(storage.position).parent)) {
+                storage.position = $from.pos
+              } else {
+                storage.clearSuggestion()
+              }
             }
             return null
           }

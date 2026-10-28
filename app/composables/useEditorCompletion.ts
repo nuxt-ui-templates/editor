@@ -39,11 +39,12 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
     onFinish: (_prompt, completionText) => {
       const editor = editorRef.value?.editor
 
-      // Transform modes replace the selection with the full result, parsed as markdown
+      // Transform modes replace the selection with the full result
       if (mode.value !== 'continue' && target && completionText && editor) {
+        const range = { from: target.from.position, to: target.to.position }
         editor.chain()
           .focus()
-          .insertContentAt({ from: target.from.position, to: target.to.position }, completionText, { contentType: 'markdown' })
+          .insertContentAt(range, parseResult(editor, range, completionText))
           .run()
       }
 
@@ -115,6 +116,29 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
     return doc.textBetween(from, to, '\n')
   }
 
+  // Parse the result as markdown. Inside a single block, only insert its inline content so the block keeps its type.
+  function parseResult(editor: Editor, { from, to }: { from: number, to: number }, text: string) {
+    const blocks = editor.markdown?.parse(text).content
+    if (!blocks) return text
+
+    const { doc } = editor.state
+    if (blocks.length === 1 && blocks[0]?.type === 'paragraph' && doc.resolve(from).sameParent(doc.resolve(to))) {
+      return blocks[0].content ?? []
+    }
+    return blocks
+  }
+
+  // Within a single block, only send its inline content so list or quote markers aren't inserted again
+  function getSelectionMarkdown(editor: Editor) {
+    const { $from, $to, from, to } = editor.state.selection
+    if (!editor.markdown || !$from.sameParent($to)) {
+      return getMarkdown(editor, from, to)
+    }
+
+    const content = $from.parent.cut($from.parentOffset, $to.parentOffset).content.toJSON()
+    return editor.markdown.serialize({ type: 'doc', content: [{ type: 'paragraph', content }] })
+  }
+
   function completeContinue(editor: Editor, pos: number) {
     mode.value = 'continue'
     complete(getMarkdown(editor, 0, pos).slice(-MAX_CONTEXT_LENGTH))
@@ -140,7 +164,7 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
     mode.value = transformMode
     language.value = lang
     setTarget(editor, from, to)
-    complete(getMarkdown(editor, from, to))
+    complete(getSelectionMarkdown(editor))
   }
 
   // Configure Completion extension
