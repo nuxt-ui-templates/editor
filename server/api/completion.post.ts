@@ -51,10 +51,18 @@ CRITICAL RULES:
   }
 
   const result = streamText({
-    model: 'openai/gpt-5-nano',
+    model: 'deepseek/deepseek-v4.1-flash',
     instructions,
     prompt,
-    maxOutputTokens
+    maxOutputTokens,
+    reasoning: 'none',
+    providerOptions: {
+      gateway: {
+        order: ['baseten'],
+        zeroDataRetention: true,
+        disallowPromptTraining: true
+      }
+    }
   })
 
   return createTextStreamResponse({ stream: result.textStream })
