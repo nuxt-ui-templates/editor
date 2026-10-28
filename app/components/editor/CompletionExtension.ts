@@ -7,7 +7,7 @@ import { useDebounceFn } from '@vueuse/core'
 export interface CompletionOptions {
   /**
    * Whether to automatically trigger completion while typing
-   * @defaultValue false
+   * @defaultValue true
    */
   autoTrigger?: boolean
   /**
@@ -50,7 +50,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
 
   addOptions() {
     return {
-      autoTrigger: false,
+      autoTrigger: true,
       debounce: 250,
       triggerCharacters: ['/', ':', '@'],
       onTrigger: undefined,
@@ -105,17 +105,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
 
   addKeyboardShortcuts() {
     return {
-      'Mod-j': ({ editor }) => {
-        // Clear any existing suggestion first to avoid flickering
-        if (this.storage.visible) {
-          this.storage.clearSuggestion()
-          this.options.onDismiss?.()
-        }
-        // Manually trigger completion
-        this.storage.debouncedTrigger?.(editor as Editor)
-        return true
-      },
-      'Tab': ({ editor }) => {
+      Tab: ({ editor }) => {
         if (!this.storage.visible || !this.storage.suggestion || this.storage.position === undefined) {
           return false
         }
@@ -136,7 +126,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         this.options.onAccept?.()
         return true
       },
-      'Escape': ({ editor }) => {
+      Escape: ({ editor }) => {
         if (this.storage.visible) {
           this.storage.clearSuggestion()
           // Force decoration update

@@ -146,7 +146,7 @@ Inline completions and text transformations powered by [AI SDK](https://ai-sdk.d
 - **Autocompletion**: Suggestions appear as you type
 - **Selection actions**: Fix, extend, simplify, or translate selected text
 
-> *Pro tip: Press \`⌘J\` to manually trigger AI completion.*
+> *Pro tip: Press \`Tab\` to accept a suggestion or \`Esc\` to dismiss it.*
 
 ### Real-time Collaboration
 

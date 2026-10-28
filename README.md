@@ -53,7 +53,7 @@ This template includes AI-powered writing assistance using the [Vercel AI SDK](h
 
 **AI Features:**
 
-- **Inline Completions** - Trigger AI suggestions with `⌘J`, accept with `Tab`
+- **Inline Completions** - Suggestions appear as you type, accept with `Tab`
 - **Continue Writing** - Extend your content from the cursor position
 - **Fix Spelling & Grammar** - Automatically correct selected text
 - **Extend/Reduce Text** - Make selected content longer or shorter
