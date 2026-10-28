@@ -1,4 +1,5 @@
 import { useCompletion } from '@ai-sdk/vue'
+import type { MappablePosition } from '@tiptap/core'
 import type { Editor } from '@tiptap/vue-3'
 import { Completion } from '~/components/editor/CompletionExtension'
 import type { CompletionStorage } from '~/components/editor/CompletionExtension'
@@ -17,11 +18,8 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
   // CSRF protection
   const { csrf, headerName } = useCsrf()
 
-  // Where toolbar actions insert their result, and the selection they replace
-  const insertState = ref<{
-    pos: number
-    deleteRange?: { from: number, to: number }
-  }>()
+  // Range toolbar actions replace with their result, kept in sync with edits made while the request runs
+  let target: { from: MappablePosition, to: MappablePosition } | undefined
   const mode = ref<CompletionMode>('continue')
   const language = ref<string>()
 
@@ -42,19 +40,18 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
       const editor = editorRef.value?.editor
 
       // Transform modes replace the selection with the full result, parsed as markdown
-      if (mode.value !== 'continue' && insertState.value?.deleteRange && completionText && editor) {
+      if (mode.value !== 'continue' && target && completionText && editor) {
         editor.chain()
           .focus()
-          .deleteRange(insertState.value.deleteRange)
-          .insertContentAt(insertState.value.pos, completionText, { contentType: 'markdown' })
+          .insertContentAt({ from: target.from.position, to: target.to.position }, completionText, { contentType: 'markdown' })
           .run()
       }
 
-      insertState.value = undefined
+      target = undefined
     },
     onError: (error) => {
       console.error('AI completion error:', error)
-      insertState.value = undefined
+      target = undefined
       getCompletionStorage()?.clearSuggestion()
     }
   })
@@ -68,8 +65,9 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
     if (storage?.visible && storage.position !== undefined) {
       storage.setSuggestion(withLeadingSpace(editor, storage.position, newCompletion))
       editor.view.dispatch(editor.state.tr.setMeta('completionUpdate', true))
-    } else if (insertState.value) {
-      const { pos } = insertState.value
+    } else if (target) {
+      // The target moves past each inserted chunk
+      const pos = target.to.position
       let delta = newCompletion.slice(oldCompletion?.length || 0)
       if (!oldCompletion) {
         delta = withLeadingSpace(editor, pos, delta)
@@ -79,9 +77,28 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
         tr.insertText(delta, pos)
         return true
       }).run()
-      insertState.value.pos += delta.length
     }
   })
+
+  // Map the target through every transaction, `editor.utils` handles collaborators' edits too.
+  // Positions are recreated each time since the Yjs relative position isn't updated by local edits.
+  watch(() => editorRef.value?.editor, (editor) => {
+    editor?.on('transaction', ({ transaction }) => {
+      if (!target) return
+      setTarget(
+        editor,
+        editor.utils.getUpdatedPosition(target.from, transaction).position.position,
+        editor.utils.getUpdatedPosition(target.to, transaction).position.position
+      )
+    })
+  }, { immediate: true })
+
+  function setTarget(editor: Editor, from: number, to: number) {
+    target = {
+      from: editor.utils.createMappablePosition(from),
+      to: editor.utils.createMappablePosition(to)
+    }
+  }
 
   // Add a space before the text if it would stick to the previous word
   function withLeadingSpace(editor: Editor, pos: number, text: string) {
@@ -109,8 +126,9 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
     getCompletionStorage()?.clearSuggestion()
 
     // Continue after the selection, or from the cursor
-    insertState.value = { pos: editor.state.selection.to }
-    completeContinue(editor, insertState.value.pos)
+    const { to } = editor.state.selection
+    setTarget(editor, to, to)
+    completeContinue(editor, to)
   }
 
   function triggerTransform(editor: Editor, transformMode: TransformMode, lang?: string) {
@@ -121,7 +139,7 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
 
     mode.value = transformMode
     language.value = lang
-    insertState.value = { pos: from, deleteRange: { from, to } }
+    setTarget(editor, from, to)
     complete(getMarkdown(editor, from, to))
   }
 

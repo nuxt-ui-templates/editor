@@ -93,15 +93,11 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         key: completionPluginKey,
         state: {
           init: () => null,
-          apply(tr) {
-            // Keep the suggestion in place when a collaborator edits the document, drop it if its anchor was deleted
+          apply(tr, _value, _oldState, newState) {
+            // The suggestion sits at the cursor and local edits dismiss it, so follow the cursor when a collaborator
+            // edits the document. Yjs replaces the whole document on remote changes, so the position can't be mapped.
             if (tr.docChanged && storage.position !== undefined) {
-              const { pos, deleted } = tr.mapping.mapResult(storage.position)
-              if (deleted) {
-                storage.clearSuggestion()
-              } else {
-                storage.position = pos
-              }
+              storage.position = newState.selection.from
             }
             return null
           }
