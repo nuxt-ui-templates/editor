@@ -94,9 +94,14 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         state: {
           init: () => null,
           apply(tr) {
-            // Keep the suggestion in place when a collaborator edits the document
+            // Keep the suggestion in place when a collaborator edits the document, drop it if its anchor was deleted
             if (tr.docChanged && storage.position !== undefined) {
-              storage.position = tr.mapping.map(storage.position)
+              const { pos, deleted } = tr.mapping.mapResult(storage.position)
+              if (deleted) {
+                storage.clearSuggestion()
+              } else {
+                storage.position = pos
+              }
             }
             return null
           }
