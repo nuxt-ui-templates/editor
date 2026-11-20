@@ -4,6 +4,9 @@ allowBuilds:
   unrs-resolver: false
   vue-demi: false
 
+minimumReleaseAgeExclude:
+  - '@nuxt/ui'
+
 overrides:
   swrv: 1.1.0
   # Pin h3 to v1: nuxt-csurf imports the hoisted h3 and uses the v1 API (getHeader, getCookie)
@@ -11,6 +14,3 @@ overrides:
   # devframe (loaded by @nuxt/fonts and @eslint/config-inspector) imports `H3` and needs h3 v2
   devframe>h3: ^2.0.8
   devframe>crossws: ^0.4.17
-
-minimumReleaseAgeExclude:
-  - '@nuxt/ui'
