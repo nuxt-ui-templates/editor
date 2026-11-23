@@ -182,17 +182,17 @@ importers:
   .:
     dependencies:
       '@ai-sdk/vue':
-        specifier: ^4.0.173
-        version: 4.0.173(vue@3.5.44(typescript@6.0.3))(zod@4.4.3)
+        specifier: ^4.0.179
+        version: 4.0.179(vue@3.5.44(typescript@6.0.3))(zod@4.4.3)
       '@iconify-json/lucide':
-        specifier: ^1.2.155
-        version: 1.2.155
+        specifier: ^1.2.158
+        version: 1.2.158
       '@iconify-json/simple-icons':
-        specifier: ^1.2.102
-        version: 1.2.102
+        specifier: ^1.2.103
+        version: 1.2.103
       '@nuxt/ui':
         specifier: ^4.13.0
-        version: 4.13.0(9c30e1ce9048b35bc82275532a85b789)
+        version: 4.13.0(4f7794f46b2c1311cffa26fc7be1f7f0)
       '@nuxthub/core':
         specifier: ^0.10.12
         version: 0.10.12(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@nuxt/schema@4.6.3)(@vercel/blob@2.9.0)(confbox@0.3.2)(db0@0.3.4)(dotenv@17.4.2)(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(magic-string@1.4.5)(magicast@0.5.5)(mlly@1.8.2)(oxc-parser@0.140.0)(rolldown@1.2.15)(synckit@0.11.13)(typescript@6.0.3)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(esbuild@0.28.2)(jiti@2.7.0)(terser@5.47.1)(yaml@2.9.0)))(vue-tsc@3.3.14(typescript@6.0.3))
@@ -227,8 +227,8 @@ importers:
         specifier: ^14.4.0
         version: 14.4.0(vue@3.5.44(typescript@6.0.3))
       ai:
-        specifier: ^7.0.173
-        version: 7.0.173(zod@4.4.3)
+        specifier: ^7.0.179
+        version: 7.0.179(zod@4.4.3)
       nuxt:
         specifier: ^4.6.3
         version: 4.6.3(@babel/plugin-syntax-jsx@7.28.6(@babel/core@7.29.0(supports-color@10.2.2)))(@babel/plugin-syntax-typescript@7.29.7(@babel/core@7.29.0(supports-color@10.2.2)))(@oxc-project/types@0.155.0)(@parcel/watcher@2.5.6)(@vercel/blob@2.9.0)(@vue/compiler-sfc@3.5.44)(acorn@8.18.0)(confbox@0.3.2)(db0@0.3.4)(dotenv@17.4.2)(esbuild@0.28.2)(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(mlly@1.8.2)(optionator@0.9.4)(oxc-parser@0.140.0)(rolldown@1.2.15)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.15)(rollup@4.65.1))(rollup@4.65.1)(srvx@1.0.5)(supports-color@10.2.2)(terser@5.47.1)(typescript@6.0.3)(vite@8.3.5(esbuild@0.28.2)(jiti@2.7.0)(terser@5.47.1)(yaml@2.9.0))(vue-tsc@3.3.14(typescript@6.0.3))(yaml@2.9.0)
@@ -272,24 +272,24 @@ importers:
 
 packages:
 
-  '@ai-sdk/gateway@4.0.146':
-    resolution: {integrity: sha512-rJ5NQSyjnpo6HSBEYc9Ff6k1EROUuB7KeAfHYVbVDsk68ynY0Eb8JeWflZKXlT6NhYgqyCiBDxE5blXWACXMKQ==}
+  '@ai-sdk/gateway@4.0.152':
+    resolution: {integrity: sha512-8LYMe0uMPbT3XW/Urhca52TSgHXAlQok74EUkWL3qXWJI7naTxJGSF6B7hvIHur+V6ttSyLLZN0rJk+Qu9psqA==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@5.0.81':
-    resolution: {integrity: sha512-pfvvdQ3d1WxdBuug/mnGEP6E48cPokwD8dMBnsFeeAUp0/rb/H2aj0f3mwOiY62gu/Cu5GO44e+SE5nDHyBWMA==}
+  '@ai-sdk/provider-utils@5.0.83':
+    resolution: {integrity: sha512-5lInsmNnh64eKi2L3fQjPy5VnV2y69lwyGnZ3vfz82Tlkgy8pWsvYueUrSJGxi8gXOM67jB9tN7LtDjjEFsNLQ==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider@4.0.38':
-    resolution: {integrity: sha512-GElz70UUCuDFFyD6m6aQJFgRY0HEABQzB5otzgkrisYaF5mnss7o0upAmbBTSD6KWiM9h7lZm1ls2c7xzHR8CA==}
+  '@ai-sdk/provider@4.0.39':
+    resolution: {integrity: sha512-jRvAhvW23+TeMGVCME2WGejP/TjzyDg7TplUep3t8HcEYnC2/8zqhCy9RRrjjVs1ljcygABZ8pQ21MbCRdF01w==}
     engines: {node: '>=22'}
 
-  '@ai-sdk/vue@4.0.173':
-    resolution: {integrity: sha512-oUu3yJzbjLlWFsLB4p/zFuACYFSMJVrXbsoW/R2dqyle9UDD/7u6mzFiyfpkP1Z6HO6nspJ2S75E7BEVkBKjqA==}
+  '@ai-sdk/vue@4.0.179':
+    resolution: {integrity: sha512-HELp320mBtm2qqLLiAeHgFeknUTc7+Fz948TRYkRyJjnGCUO+0RPELkYFkavgbsLTIei3aZDrW3rBS+lZg5Ndw==}
     engines: {node: '>=22'}
     peerDependencies:
       vue: ^3.3.4
@@ -770,11 +770,11 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/lucide@1.2.155':
-    resolution: {integrity: sha512-pntdVKUFkr/NA+R5wVvRlpRFCr+wY8xKU1wFjywvOr5taNq8Y6MTfHTZ6v7P5M0pe3LQYUO2rYzKCgIfAhdcDA==}
+  '@iconify-json/lucide@1.2.158':
+    resolution: {integrity: sha512-odd13G5/Jv4W+yomId3BjCQ/a1k7QemC0mi+CBvvpl18JBO+sQajKl4F3WtPvFHMnkOQ4d3/BFKShTmBlbG0dg==}
 
-  '@iconify-json/simple-icons@1.2.102':
-    resolution: {integrity: sha512-IwbAj1ZI6LBy+qU7sVYxB1wgbSSIDKjY9I0BnnpjfIdlqfXoYnBb80UvYA0WkodUFWfQyL4AjaKMg48fqX8sIw==}
+  '@iconify-json/simple-icons@1.2.103':
+    resolution: {integrity: sha512-FMn+aVTsqQdYOwf5reCXXtfWapb+4ijI6WrU8ej1spWXWfA+d41TBXcKagHFwiHZyqt7kP7F04AiG1dYj2R06w==}
 
   '@iconify/collections@1.0.767':
     resolution: {integrity: sha512-5FPp/ZWedzBBNPNSaU+nFm6YfGDqaJ3FQ1p1EEnK5LPli5AKmujBZg49ICRtyoxk1k3HulmjkToVouO8fd4lwA==}
@@ -2808,8 +2808,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@7.0.173:
-    resolution: {integrity: sha512-dLea37zT1h7cjkUsBprU4Rq35HJqhtHHaq1jTAXjHQoyfpeswpgCrhjZJWdWc10gjEAxmz114py7iLGQ3xIMxw==}
+  ai@7.0.179:
+    resolution: {integrity: sha512-WT2ad3qEQPLne/5RDE/utNMSKYUuNpnGkI46AO/6Lv+IbEJ3kRwbatLX3HNfk25Y7N8LpdqOcSnMLcdw11VyIQ==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6054,29 +6054,29 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/gateway@4.0.146(zod@4.4.3)':
+  '@ai-sdk/gateway@4.0.152(zod@4.4.3)':
     dependencies:
-      '@ai-sdk/provider': 4.0.38
-      '@ai-sdk/provider-utils': 5.0.81(zod@4.4.3)
+      '@ai-sdk/provider': 4.0.39
+      '@ai-sdk/provider-utils': 5.0.83(zod@4.4.3)
       '@vercel/oidc': 3.2.0
       zod: 4.4.3
 
-  '@ai-sdk/provider-utils@5.0.81(zod@4.4.3)':
+  '@ai-sdk/provider-utils@5.0.83(zod@4.4.3)':
     dependencies:
-      '@ai-sdk/provider': 4.0.38
+      '@ai-sdk/provider': 4.0.39
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.0.8
       zod: 4.4.3
 
-  '@ai-sdk/provider@4.0.38':
+  '@ai-sdk/provider@4.0.39':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/vue@4.0.173(vue@3.5.44(typescript@6.0.3))(zod@4.4.3)':
+  '@ai-sdk/vue@4.0.179(vue@3.5.44(typescript@6.0.3))(zod@4.4.3)':
     dependencies:
-      '@ai-sdk/provider-utils': 5.0.81(zod@4.4.3)
-      ai: 7.0.173(zod@4.4.3)
+      '@ai-sdk/provider-utils': 5.0.83(zod@4.4.3)
+      ai: 7.0.179(zod@4.4.3)
       swrv: 1.1.0(vue@3.5.44(typescript@6.0.3))
       vue: 3.5.44(typescript@6.0.3)
     transitivePeerDependencies:
@@ -6577,11 +6577,11 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iconify-json/lucide@1.2.155':
+  '@iconify-json/lucide@1.2.158':
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/simple-icons@1.2.102':
+  '@iconify-json/simple-icons@1.2.103':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -7250,7 +7250,7 @@ snapshots:
       rc9: 3.1.0
       std-env: 4.3.0
 
-  '@nuxt/ui@4.13.0(9c30e1ce9048b35bc82275532a85b789)':
+  '@nuxt/ui@4.13.0(4f7794f46b2c1311cffa26fc7be1f7f0)':
     dependencies:
       '@floating-ui/dom': 1.8.0
       '@iconify/vue': 5.0.5(vue@3.5.44(typescript@6.0.3))
@@ -7319,7 +7319,7 @@ snapshots:
       vaul-vue: 0.4.1(reka-ui@2.11.0(vue@3.5.44(typescript@6.0.3)))(vue@3.5.44(typescript@6.0.3))
       vue-component-type-helpers: 3.3.14
     optionalDependencies:
-      ai: 7.0.173(zod@4.4.3)
+      ai: 7.0.179(zod@4.4.3)
       eslint-plugin-better-tailwindcss: 4.11.0(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(tailwindcss@4.3.5)(typescript@6.0.3)
       valibot: 1.4.2(typescript@6.0.3)
       vue-router: 5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.65.1)(vite@8.3.5(esbuild@0.28.2)(jiti@2.7.0)(terser@5.47.1)(yaml@2.9.0))(vue@3.5.44(typescript@6.0.3))
@@ -8942,11 +8942,11 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@7.0.173(zod@4.4.3):
+  ai@7.0.179(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 4.0.146(zod@4.4.3)
-      '@ai-sdk/provider': 4.0.38
-      '@ai-sdk/provider-utils': 5.0.81(zod@4.4.3)
+      '@ai-sdk/gateway': 4.0.152(zod@4.4.3)
+      '@ai-sdk/provider': 4.0.39
+      '@ai-sdk/provider-utils': 5.0.83(zod@4.4.3)
       zod: 4.4.3
 
   ajv@6.15.0:
