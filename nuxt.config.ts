@@ -34,6 +34,12 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-06-30',
 
+  nitro: {
+    externals: {
+      inline: ['@ai-sdk/vue', 'swrv']
+    }
+  },
+
   hub: {
     blob: true
   },
